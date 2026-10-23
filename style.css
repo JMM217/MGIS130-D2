@@ -1,4 +1,3 @@
-/* Base Layout & CSS Variables */
 :root {
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
@@ -18,7 +17,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
@@ -37,16 +36,14 @@ body {
     margin: 0 auto;
 }
 
-/* Header */
 .app-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .app-header h1 {
     font-size: 2.25rem;
     font-weight: 700;
-    color: var(--text-primary);
 }
 
 .app-header p {
@@ -55,7 +52,38 @@ body {
     margin-top: 0.25rem;
 }
 
-/* Two-Column Responsive Grid */
+/* Tabs Navigation */
+.calculator-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    flex: 1;
+    min-width: 130px;
+    padding: 0.75rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    background-color: #f1f5f9;
+}
+
+.tab-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
 .calculator-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -68,24 +96,21 @@ body {
     }
 }
 
-/* Card Styling */
 .card {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: var(--radius);
     padding: 1.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .card h2 {
     font-size: 1.25rem;
     margin-bottom: 1.25rem;
-    color: var(--text-primary);
     border-bottom: 2px solid var(--bg-color);
     padding-bottom: 0.5rem;
 }
 
-/* Form Controls */
 .loan-form {
     display: flex;
     flex-direction: column;
@@ -104,16 +129,15 @@ body {
     color: var(--text-secondary);
 }
 
-.form-group input {
+.form-group input, .form-group select {
     width: 100%;
     padding: 0.75rem;
     border: 1px solid var(--border-color);
     border-radius: 6px;
     font-size: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.form-group input:focus {
+.form-group input:focus, .form-group select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
@@ -125,7 +149,6 @@ body {
     margin-top: 0.5rem;
 }
 
-/* Buttons */
 .btn {
     flex: 1;
     padding: 0.75rem 1rem;
@@ -134,29 +157,11 @@ body {
     border-radius: 6px;
     border: none;
     cursor: pointer;
-    transition: background-color 0.2s;
 }
 
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-}
+.btn-primary { background-color: var(--primary-color); color: white; }
+.btn-secondary { background-color: var(--bg-color); color: var(--text-secondary); border: 1px solid var(--border-color); }
 
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-}
-
-.btn-secondary {
-    background-color: var(--bg-color);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-    background-color: var(--border-color);
-}
-
-/* Error Banner */
 .error-banner {
     margin-top: 1rem;
     padding: 0.75rem 1rem;
@@ -167,7 +172,6 @@ body {
     border: 1px solid #fca5a5;
 }
 
-/* Results Display */
 .empty-state {
     text-align: center;
     color: var(--text-secondary);
@@ -201,7 +205,6 @@ body {
 .metric-value {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--text-primary);
 }
 
 .highlight .metric-value {
@@ -211,70 +214,44 @@ body {
 
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
     gap: 0.75rem;
 }
 
-/* Principal vs Interest Visual Bar */
-.breakdown-bar-container {
-    margin-top: 1.5rem;
-}
+.breakdown-bar-container { margin-top: 1.5rem; }
+.breakdown-labels { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-secondary); }
+.breakdown-bar { height: 12px; width: 100%; background-color: var(--border-color); border-radius: 6px; overflow: hidden; display: flex; }
+.bar-segment.principal { background-color: var(--principal-color); transition: width 0.4s ease; }
+.bar-segment.interest { background-color: var(--interest-color); transition: width 0.4s ease; }
 
-.breakdown-labels {
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: var(--text-secondary);
-}
-
-.breakdown-bar {
-    height: 12px;
-    width: 100%;
-    background-color: var(--border-color);
-    border-radius: 6px;
-    overflow: hidden;
-    display: flex;
-}
-
-.bar-segment.principal {
-    background-color: var(--principal-color);
-    transition: width 0.4s ease;
-}
-
-.bar-segment.interest {
-    background-color: var(--interest-color);
-    transition: width 0.4s ease;
-}
-
-.breakdown-legend {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-.dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-
+.breakdown-legend { display: flex; gap: 1rem; margin-top: 0.5rem; font-size: 0.8rem; color: var(--text-secondary); }
+.legend-item { display: flex; align-items: center; gap: 0.35rem; }
+.dot { width: 8px; height: 8px; border-radius: 50%; }
 .principal-dot { background-color: var(--principal-color); }
 .interest-dot { background-color: var(--interest-color); }
 
-/* Utility Classes */
-.hidden {
-    display: none !important;
+/* Comparison Table */
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
 }
 
-/* Architectural Footer */
+.comparison-table th, .comparison-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.comparison-table th {
+    background-color: var(--bg-color);
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.hidden { display: none !important; }
+
 .app-footer {
     margin-top: 2rem;
     text-align: center;
