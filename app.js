@@ -2,36 +2,33 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentMode = 'amortized';
 
     // -------------------------------------------------------------
-    // UI LAYER: Dark Mode Theme Initialization
+    // UI LAYER: Dark Mode Switcher (FIXED)
     // -------------------------------------------------------------
     const themeToggleBtn = document.getElementById('themeToggleBtn');
-    const moonIcon = document.querySelector('.moon-icon');
-    const sunIcon = document.querySelector('.sun-icon');
-    const themeLabel = document.querySelector('.theme-label');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeLabel = document.getElementById('themeLabel');
 
-    // Check system preference or localStorage
-    const savedTheme = localStorage.getItem('theme') || 
-        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-
+    // Retrieve saved theme or fallback to light
+    const savedTheme = localStorage.getItem('app-theme') || 'light';
     applyTheme(savedTheme);
 
     themeToggleBtn.addEventListener('click', () => {
-        const activeTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        applyTheme(activeTheme);
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(newTheme);
     });
 
     function applyTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-
         if (theme === 'dark') {
-            moonIcon.classList.add('hidden');
-            sunIcon.classList.remove('hidden');
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeIcon.textContent = '☀️';
             themeLabel.textContent = 'Light Mode';
+            localStorage.setItem('app-theme', 'dark');
         } else {
-            sunIcon.classList.add('hidden');
-            moonIcon.classList.remove('hidden');
+            document.documentElement.setAttribute('data-theme', 'light');
+            themeIcon.textContent = '🌙';
             themeLabel.textContent = 'Dark Mode';
+            localStorage.setItem('app-theme', 'light');
         }
     }
 
@@ -63,10 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const breakdownRatioText = document.getElementById('breakdownRatioText');
 
     // -------------------------------------------------------------
-    // UI LAYER: Mode Switcher
+    // UI LAYER: Tab Mode Switching (FIXED)
     // -------------------------------------------------------------
     tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
             tabBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentMode = btn.dataset.mode;
@@ -124,22 +122,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -------------------------------------------------------------
-    // DATA & PROCESSING LAYER: Submit Handler
+    // DATA & PROCESSING LAYER: Submit Handler (FIXED VALIDATION)
     // -------------------------------------------------------------
     calculatorForm.addEventListener('submit', (e) => {
         e.preventDefault();
         clearError();
 
-        // 1. DATA LAYER: Extract values
-        const P = parseFloat(document.getElementById('principalInput').value);
-        const r = parseFloat(document.getElementById('rateInput').value);
-        const t = parseFloat(document.getElementById('termInput').value);
-        const n = parseInt(document.getElementById('compoundFreq').value, 10);
+        // 1. DATA LAYER: Extract & parse inputs directly
+        const rawP = document.getElementById('principalInput').value;
+        const rawR = document.getElementById('rateInput').value;
+        const rawT = document.getElementById('termInput').value;
+        const rawN = document.getElementById('compoundFreq').value;
 
-        // 2. PROCESSING LAYER: Validations
-        if (isNaN(P) || P <= 0) return showError('Enter a valid principal amount greater than 0.');
-        if (isNaN(r) || r <= 0) return showError('Enter a valid annual interest rate greater than 0.');
-        if (isNaN(t) || t <= 0) return showError('Enter a valid term in years.');
+        const P = parseFloat(rawP);
+        const r = parseFloat(rawR);
+        const t = parseFloat(rawT);
+        const n = parseInt(rawN, 10) || 12;
+
+        // 2. PROCESSING LAYER: Input Validations
+        if (!rawP || isNaN(P) || P <= 0) {
+            return showError('Please enter a valid principal/loan amount greater than 0.');
+        }
+        if (!rawR || isNaN(r) || r <= 0) {
+            return showError('Please enter a valid annual interest rate greater than 0.');
+        }
+        if (!rawT || isNaN(t) || t <= 0) {
+            return showError('Please enter a valid term in years greater than 0.');
+        }
 
         // 3. PROCESSING & UI LAYER RENDER
         if (currentMode === 'amortized') {
@@ -197,8 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const principalPercent = (principal / total) * 100;
         const interestPercent = (interest / total) * 100;
 
-        principalBar.style.width = `${principalPercent.toFixed(1)}%`;
-        interestBar.style.width = `${interestPercent.toFixed(1)}%`;
+        principalBar.style.width = `${Math.min(100, Math.max(0, principalPercent)).toFixed(1)}%`;
+        interestBar.style.width = `${Math.min(100, Math.max(0, interestPercent)).toFixed(1)}%`;
         breakdownRatioText.textContent = `${principalPercent.toFixed(0)}% / ${interestPercent.toFixed(0)}%`;
     }
 
