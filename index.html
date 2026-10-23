@@ -5,13 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Interest & Loan Calculator</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for elevated typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
+        <!-- Header with Dark Mode Switcher -->
         <header class="app-header">
-            <h1>Financial Interest Calculator</h1>
-            <p>Interactive Planning Tool for Loans & Interest Growth</p>
+            <div class="header-content">
+                <div class="brand-title">
+                    <span class="brand-badge">3-Layer Arch</span>
+                    <h1>Financial Calculator</h1>
+                </div>
+                <p>Interactive Planning Tool for Amortization & Growth</p>
+            </div>
+            
+            <button type="button" id="themeToggleBtn" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon moon-icon">🌙</span>
+                <span class="theme-icon sun-icon hidden">☀️</span>
+                <span class="theme-label">Dark Mode</span>
+            </button>
         </header>
 
         <!-- Mode Navigation Tabs -->
@@ -24,34 +39,49 @@
 
         <!-- Main Content Layout -->
         <main class="calculator-grid">
-            <!-- Data Layer (Dynamic Input Form) -->
+            <!-- Data Layer (Inputs) -->
             <section class="card input-section">
-                <h2 id="formTitle">Loan Amortization Parameters</h2>
+                <div class="card-header">
+                    <h2 id="formTitle">Loan Amortization Parameters</h2>
+                    <span class="card-subtitle">Data Layer Inputs</span>
+                </div>
+
                 <form id="calculatorForm" class="loan-form">
                     
                     <div class="form-group" id="groupPrincipal">
                         <label for="principalInput" id="labelPrincipal">Principal / Loan Amount ($)</label>
-                        <input type="number" id="principalInput" placeholder="e.g., 10000" min="1" step="any" required>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="principalInput" placeholder="25,000" min="1" step="any" required>
+                        </div>
                     </div>
 
                     <div class="form-group" id="groupRate">
                         <label for="rateInput">Annual Interest Rate (%)</label>
-                        <input type="number" id="rateInput" placeholder="e.g., 6.5" min="0.01" step="0.01" required>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">%</span>
+                            <input type="number" id="rateInput" placeholder="6.5" min="0.01" step="0.01" required>
+                        </div>
                     </div>
 
                     <div class="form-group" id="groupTerm">
                         <label for="termInput">Term (Years)</label>
-                        <input type="number" id="termInput" placeholder="e.g., 5" min="1" max="50" required>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">Yr</span>
+                            <input type="number" id="termInput" placeholder="5" min="1" max="50" required>
+                        </div>
                     </div>
 
                     <div class="form-group hidden" id="groupCompoundFreq">
                         <label for="compoundFreq">Compounding Frequency</label>
-                        <select id="compoundFreq">
-                            <option value="12" selected>Monthly (12x/yr)</option>
-                            <option value="4">Quarterly (4x/yr)</option>
-                            <option value="1">Annually (1x/yr)</option>
-                            <option value="365">Daily (365x/yr)</option>
-                        </select>
+                        <div class="input-wrapper select-wrapper">
+                            <select id="compoundFreq">
+                                <option value="12" selected>Monthly (12x/yr)</option>
+                                <option value="4">Quarterly (4x/yr)</option>
+                                <option value="1">Annually (1x/yr)</option>
+                                <option value="365">Daily (365x/yr)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-actions">
@@ -63,19 +93,24 @@
                 <div id="errorMessage" class="error-banner hidden" role="alert"></div>
             </section>
 
-            <!-- User Interface Layer (Results Display) -->
+            <!-- User Interface Layer (Presentation & Results Display) -->
             <section class="card results-section">
-                <h2>Calculation Results</h2>
+                <div class="card-header">
+                    <h2>Calculation Results</h2>
+                    <span class="card-subtitle">UI Layer Display</span>
+                </div>
 
                 <!-- Default Empty State -->
                 <div id="emptyState" class="empty-state">
-                    <p>Enter your financial parameters and click <strong>Calculate</strong> to display figures and visual breakdowns.</p>
+                    <div class="empty-icon">📊</div>
+                    <h3>Ready for Calculation</h3>
+                    <p>Enter your financial parameters and click <strong>Calculate</strong> to inspect total figures and visual breakdowns.</p>
                 </div>
 
                 <!-- Active Calculation Results -->
                 <div id="resultsDisplay" class="results-content hidden">
                     
-                    <!-- Single Calculation View -->
+                    <!-- Single Mode Display -->
                     <div id="singleResultContainer">
                         <div class="metric-card highlight">
                             <span class="metric-label" id="primaryMetricLabel">Estimated Monthly Payment</span>
@@ -88,70 +123,4 @@
                                 <span id="metricPrincipal" class="metric-value">$0.00</span>
                             </div>
                             <div class="metric-card">
-                                <span class="metric-label">Total Interest</span>
-                                <span id="metricInterest" class="metric-value">$0.00</span>
-                            </div>
-                            <div class="metric-card">
-                                <span class="metric-label">Total Final Value</span>
-                                <span id="metricTotal" class="metric-value">$0.00</span>
-                            </div>
-                        </div>
-
-                        <!-- Visual Ratio Bar -->
-                        <div class="breakdown-bar-container">
-                            <div class="breakdown-labels">
-                                <span>Principal vs. Interest Split</span>
-                            </div>
-                            <div class="breakdown-bar">
-                                <div id="principalBar" class="bar-segment principal" style="width: 50%;"></div>
-                                <div id="interestBar" class="bar-segment interest" style="width: 50%;"></div>
-                            </div>
-                            <div class="breakdown-legend">
-                                <span class="legend-item"><span class="dot principal-dot"></span> Principal</span>
-                                <span class="legend-item"><span class="dot interest-dot"></span> Interest</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Comparison Table View -->
-                    <div id="compareResultContainer" class="hidden">
-                        <table class="comparison-table">
-                            <thead>
-                                <tr>
-                                    <th>Calculation Type</th>
-                                    <th>Total Interest</th>
-                                    <th>Final Balance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Simple Interest</strong></td>
-                                    <td id="compSimpleInterest">$0.00</td>
-                                    <td id="compSimpleTotal">$0.00</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Compound Interest</strong></td>
-                                    <td id="compCompoundInterest">$0.00</td>
-                                    <td id="compCompoundTotal">$0.00</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Amortized Loan</strong></td>
-                                    <td id="compAmortizedInterest">$0.00</td>
-                                    <td id="compAmortizedTotal">$0.00</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                </div>
-            </section>
-        </main>
-
-        <footer class="app-footer">
-            <p>Three-Layer Architecture Demonstration: Data Layer (Forms & Controls) &rarr; Processing Layer (Financial Formulas) &rarr; UI Layer (DOM Rendering)</p>
-        </footer>
-    </div>
-
-    <script src="app.js" defer></script>
-</body>
-</html>
+                                <span class="metric-label">Total
