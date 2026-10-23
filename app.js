@@ -2,34 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentMode = 'amortized';
 
     // -------------------------------------------------------------
-    // 1. DARK MODE LOGIC (Direct DOM Attribute)
-    // -------------------------------------------------------------
-    const themeToggleBtn = document.getElementById('themeToggleBtn');
-    const themeIcon = document.getElementById('themeIcon');
-    const themeLabel = document.getElementById('themeLabel');
-
-    const savedTheme = localStorage.getItem('calc-theme') || 'light';
-    applyTheme(savedTheme);
-
-    themeToggleBtn.addEventListener('click', () => {
-        const activeTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        applyTheme(activeTheme);
-    });
-
-    function applyTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('calc-theme', theme);
-        if (theme === 'dark') {
-            themeIcon.textContent = '☀️';
-            themeLabel.textContent = 'Light Mode';
-        } else {
-            themeIcon.textContent = '🌙';
-            themeLabel.textContent = 'Dark Mode';
-        }
-    }
-
-    // -------------------------------------------------------------
-    // 2. DOM ELEMENTS
+    // UI LAYER: DOM Elements
     // -------------------------------------------------------------
     const tabBtns = document.querySelectorAll('.tab-btn');
     const formTitle = document.getElementById('formTitle');
@@ -55,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const interestBar = document.getElementById('interestBar');
 
     // -------------------------------------------------------------
-    // 3. TAB SWITCHING
+    // UI LAYER: Mode Switching Handler
     // -------------------------------------------------------------
     tabBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -63,11 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
             tabBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentMode = btn.dataset.mode;
-            updateModeUI();
+            updateFormModeUI();
         });
     });
 
-    function updateModeUI() {
+    function updateFormModeUI() {
         clearError();
         resultsDisplay.classList.add('hidden');
         emptyState.classList.remove('hidden');
@@ -92,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -------------------------------------------------------------
-    // 4. FINANCIAL FORMULAS
+    // PROCESSING LAYER: Financial Formulas
     // -------------------------------------------------------------
     function calcSimpleInterest(P, r, t) {
         const interest = P * (r / 100) * t;
@@ -117,33 +90,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -------------------------------------------------------------
-    // 5. CALCULATE ACTION HANDLER
+    // DATA & PROCESSING LAYER: Form Submit Handler
     // -------------------------------------------------------------
     calculatorForm.addEventListener('submit', (e) => {
         e.preventDefault();
         clearError();
 
-        // Get numbers
+        // 1. DATA LAYER: Retrieve inputs
         const P = parseFloat(document.getElementById('principalInput').value);
         const r = parseFloat(document.getElementById('rateInput').value);
         const t = parseFloat(document.getElementById('termInput').value);
         const n = parseInt(document.getElementById('compoundFreq').value, 10) || 12;
 
-        // Validations
-        if (isNaN(P) || P <= 0) return showError('Please enter a valid Principal amount greater than 0.');
-        if (isNaN(r) || r <= 0) return showError('Please enter a valid Interest Rate greater than 0.');
-        if (isNaN(t) || t <= 0) return showError('Please enter a valid Term in years greater than 0.');
+        // 2. PROCESSING LAYER: Input Validation
+        if (isNaN(P) || P <= 0) return showError('Please enter a valid principal amount greater than 0.');
+        if (isNaN(r) || r <= 0) return showError('Please enter a valid annual interest rate greater than 0.');
+        if (isNaN(t) || t <= 0) return showError('Please enter a valid term in years greater than 0.');
 
-        // Compute based on active tab
+        // 3. PROCESSING LAYER & UI RENDER: Mode Computations
         if (currentMode === 'amortized') {
             const loan = calcAmortizedLoan(P, r, t);
-            displaySingleResult('Estimated Monthly Payment', loan.monthlyPayment, P, loan.interest, loan.totalPaid);
+            renderSingleResult('Estimated Monthly Payment', loan.monthlyPayment, P, loan.interest, loan.totalPaid);
         } else if (currentMode === 'simple') {
             const simple = calcSimpleInterest(P, r, t);
-            displaySingleResult('Total Future Balance', simple.total, P, simple.interest, simple.total);
+            renderSingleResult('Total Future Balance', simple.total, P, simple.interest, simple.total);
         } else if (currentMode === 'compound') {
             const compound = calcCompoundInterest(P, r, t, n);
-            displaySingleResult('Total Future Balance', compound.total, P, compound.interest, compound.total);
+            renderSingleResult('Total Future Balance', compound.total, P, compound.interest, compound.total);
         } else if (currentMode === 'compare') {
             const simple = calcSimpleInterest(P, r, t);
             const compound = calcCompoundInterest(P, r, t, n);
@@ -175,9 +148,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // -------------------------------------------------------------
-    // 6. UI RENDER HELPERS
+    // UI LAYER: Helpers
     // -------------------------------------------------------------
-    function displaySingleResult(label, primaryVal, principal, interest, total) {
+    function renderSingleResult(label, primaryVal, principal, interest, total) {
         compareResultContainer.classList.add('hidden');
         singleResultContainer.classList.remove('hidden');
 
@@ -187,11 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
         metricInterest.textContent = formatCurrency(interest);
         metricTotal.textContent = formatCurrency(total);
 
-        const principalPct = Math.min(100, Math.max(0, (principal / total) * 100));
-        const interestPct = Math.min(100, Math.max(0, (interest / total) * 100));
+        const principalPercent = (principal / total) * 100;
+        const interestPercent = (interest / total) * 100;
 
-        principalBar.style.width = `${principalPct}%`;
-        interestBar.style.width = `${interestPct}%`;
+        principalBar.style.width = `${Math.min(100, Math.max(0, principalPercent)).toFixed(1)}%`;
+        interestBar.style.width = `${Math.min(100, Math.max(0, interestPercent)).toFixed(1)}%`;
     }
 
     function formatCurrency(val) {
