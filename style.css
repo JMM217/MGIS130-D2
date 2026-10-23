@@ -1,4 +1,4 @@
-/* Theme Palette */
+/* CSS Theme Variables */
 :root {
     --bg-color: #f8fafc;
     --card-bg: #ffffff;
@@ -9,8 +9,15 @@
     --button-border: #cbd5e1;
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
+    --primary-light: #eff6ff;
+    --primary-border: #bfdbfe;
     --input-bg: #ffffff;
     --input-border: #cbd5e1;
+    --principal-color: #2563eb;
+    --interest-color: #f59e0b;
+    --error-bg: #fef2f2;
+    --error-border: #fca5a5;
+    --error-text: #991b1b;
 }
 
 [data-theme="dark"] {
@@ -23,8 +30,15 @@
     --button-border: #475569;
     --primary-color: #3b82f6;
     --primary-hover: #60a5fa;
+    --primary-light: #1e293b;
+    --primary-border: #334155;
     --input-bg: #0f172a;
     --input-border: #334155;
+    --principal-color: #3b82f6;
+    --interest-color: #fbbf24;
+    --error-bg: #450a0a;
+    --error-border: #7f1d1d;
+    --error-text: #fca5a5;
 }
 
 * {
@@ -45,15 +59,29 @@ body {
 }
 
 .app-container {
-    max-width: 650px;
+    max-width: 960px;
     width: 100%;
 }
 
+/* Header & Theme Toggle */
 .app-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.app-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.app-header p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
 }
 
 .theme-toggle {
@@ -69,23 +97,23 @@ body {
     cursor: pointer;
 }
 
-/* Tab Switching Styles */
+/* Tab Navigation */
 .calculator-tabs {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
     flex-wrap: wrap;
 }
 
 .tab-btn {
     flex: 1;
-    min-width: 120px;
+    min-width: 130px;
     padding: 0.75rem 0.5rem;
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 8px;
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--text-secondary);
     cursor: pointer;
 }
@@ -100,7 +128,20 @@ body {
     border-color: var(--primary-color);
 }
 
-/* Card & Form Layout */
+/* Main Grid Layout */
+.calculator-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .calculator-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Card Styling */
 .card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -116,10 +157,11 @@ body {
     padding-bottom: 0.5rem;
 }
 
+/* Forms & Inputs */
 .loan-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
 .form-group {
@@ -144,6 +186,11 @@ body {
     color: var(--text-primary);
 }
 
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
 .form-actions {
     display: flex;
     gap: 0.75rem;
@@ -152,9 +199,9 @@ body {
 
 .btn {
     flex: 1;
-    padding: 0.75rem;
-    font-size: 0.9rem;
-    font-weight: 700;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
     border-radius: 6px;
     border: none;
     cursor: pointer;
@@ -165,12 +212,158 @@ body {
     color: #ffffff;
 }
 
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
 .btn-secondary {
     background-color: var(--button-bg);
     color: var(--text-secondary);
     border: 1px solid var(--button-border);
 }
 
+/* Error Banner */
+.error-banner {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    border: 1px solid var(--error-border);
+}
+
+/* Results Display */
+.empty-state {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2.5rem 1rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.metric-card {
+    background-color: var(--bg-color);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-card.highlight {
+    background-color: var(--primary-light);
+    border-color: var(--primary-border);
+}
+
+.metric-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.highlight .metric-value {
+    color: var(--primary-color);
+    font-size: 2rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 0.75rem;
+}
+
+/* Ratio Bar */
+.breakdown-bar-container {
+    margin-top: 1.5rem;
+}
+
+.breakdown-labels {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.breakdown-bar {
+    height: 12px;
+    width: 100%;
+    background-color: var(--card-border);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+}
+
+.bar-segment.principal {
+    background-color: var(--principal-color);
+    transition: width 0.4s ease;
+}
+
+.bar-segment.interest {
+    background-color: var(--interest-color);
+    transition: width 0.4s ease;
+}
+
+.breakdown-legend {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.principal-dot { background-color: var(--principal-color); }
+.interest-dot { background-color: var(--interest-color); }
+
+/* Comparison Table */
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+}
+
+.comparison-table th, .comparison-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.9rem;
+}
+
+.comparison-table th {
+    background-color: var(--bg-color);
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
 .hidden {
     display: none !important;
+}
+
+.app-footer {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    padding: 1rem;
+    border-top: 1px solid var(--card-border);
 }
