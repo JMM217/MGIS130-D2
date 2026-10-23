@@ -1,112 +1,203 @@
-// Wait for DOM content to load before attaching event listeners
 document.addEventListener('DOMContentLoaded', () => {
+    // Current Active Calculator Mode ('amortized' | 'simple' | 'compound' | 'compare')
+    let currentMode = 'amortized';
+
     // -------------------------------------------------------------
-    // UI LAYER: DOM Element Selections
+    // UI LAYER: DOM Elements
     // -------------------------------------------------------------
-    const loanForm = document.getElementById('loanForm');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const formTitle = document.getElementById('formTitle');
+    const calculatorForm = document.getElementById('calculatorForm');
     const resetBtn = document.getElementById('resetBtn');
     const errorMessage = document.getElementById('errorMessage');
-    
+
+    const groupCompoundFreq = document.getElementById('groupCompoundFreq');
+    const labelPrincipal = document.getElementById('labelPrincipal');
+
     const emptyState = document.getElementById('emptyState');
     const resultsDisplay = document.getElementById('resultsDisplay');
-    
-    const monthlyPaymentEl = document.getElementById('monthlyPayment');
-    const totalPrincipalEl = document.getElementById('totalPrincipal');
-    const totalInterestEl = document.getElementById('totalInterest');
-    const totalCostEl = document.getElementById('totalCost');
-    
+    const singleResultContainer = document.getElementById('singleResultContainer');
+    const compareResultContainer = document.getElementById('compareResultContainer');
+
+    const primaryMetricLabel = document.getElementById('primaryMetricLabel');
+    const primaryMetricValue = document.getElementById('primaryMetricValue');
+    const metricPrincipal = document.getElementById('metricPrincipal');
+    const metricInterest = document.getElementById('metricInterest');
+    const metricTotal = document.getElementById('metricTotal');
+
     const principalBar = document.getElementById('principalBar');
     const interestBar = document.getElementById('interestBar');
 
     // -------------------------------------------------------------
-    // DATA LAYER & PROCESSING LAYER: Event Handlers & Logic
+    // UI LAYER: Mode Switching Handler
     // -------------------------------------------------------------
-    loanForm.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent page refresh on submit
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMode = btn.dataset.mode;
+            updateFormModeUI();
+        });
+    });
+
+    function updateFormModeUI() {
+        clearError();
+        resultsDisplay.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+
+        if (currentMode === 'amortized') {
+            formTitle.textContent = 'Loan Amortization Parameters';
+            labelPrincipal.textContent = 'Loan Amount / Principal ($)';
+            groupCompoundFreq.classList.add('hidden');
+        } else if (currentMode === 'simple') {
+            formTitle.textContent = 'Simple Interest Parameters';
+            labelPrincipal.textContent = 'Initial Investment / Principal ($)';
+            groupCompoundFreq.classList.add('hidden');
+        } else if (currentMode === 'compound') {
+            formTitle.textContent = 'Compound Interest Parameters';
+            labelPrincipal.textContent = 'Initial Investment / Principal ($)';
+            groupCompoundFreq.classList.remove('hidden');
+        } else if (currentMode === 'compare') {
+            formTitle.textContent = 'Comparison Parameters';
+            labelPrincipal.textContent = 'Principal Amount ($)';
+            groupCompoundFreq.classList.remove('hidden');
+        }
+    }
+
+    // -------------------------------------------------------------
+    // PROCESSING LAYER: Financial Formulas
+    // -------------------------------------------------------------
+    
+    // Simple Interest: I = P * r * t
+    function calcSimpleInterest(P, r, t) {
+        const interest = P * (r / 100) * t;
+        return { interest, total: P + interest };
+    }
+
+    // Compound Interest: A = P(1 + r/n)^(n*t)
+    function calcCompoundInterest(P, r, t, n) {
+        const rateDecimal = r / 100;
+        const total = P * Math.pow(1 + (rateDecimal / n), n * t);
+        const interest = total - P;
+        return { interest, total };
+    }
+
+    // Amortized Loan Payment: M = P * [r(1+r)^n] / [(1+r)^n - 1]
+    function calcAmortizedLoan(P, r, t) {
+        const monthlyRate = (r / 100) / 12;
+        const totalPayments = t * 12;
+        const rateFactor = Math.pow(1 + monthlyRate, totalPayments);
+        const monthlyPayment = (P * monthlyRate * rateFactor) / (rateFactor - 1);
+        const totalPaid = monthlyPayment * totalPayments;
+        const interest = totalPaid - P;
+        return { monthlyPayment, interest, totalPaid };
+    }
+
+    // -------------------------------------------------------------
+    // DATA & PROCESSING LAYER: Form Submit Handler
+    // -------------------------------------------------------------
+    calculatorForm.addEventListener('submit', (e) => {
+        e.preventDefault();
         clearError();
 
-        // 1. DATA LAYER: Extract user inputs
-        const amountInput = document.getElementById('loanAmount').value;
-        const rateInput = document.getElementById('interestRate').value;
-        const termInput = document.getElementById('loanTerm').value;
-
-        // Parse numerical values
-        const principal = parseFloat(amountInput);
-        const annualRate = parseFloat(rateInput);
-        const termYears = parseFloat(termInput);
+        // 1. DATA LAYER: Retrieve inputs
+        const P = parseFloat(document.getElementById('principalInput').value);
+        const r = parseFloat(document.getElementById('rateInput').value);
+        const t = parseFloat(document.getElementById('termInput').value);
+        const n = parseInt(document.getElementById('compoundFreq').value, 10);
 
         // 2. PROCESSING LAYER: Input Validation
-        if (isNaN(principal) || principal <= 0) {
-            showError('Please enter a valid loan amount greater than 0.');
-            return;
+        if (isNaN(P) || P <= 0) return showError('Enter a valid principal amount greater than 0.');
+        if (isNaN(r) || r <= 0) return showError('Enter a valid annual rate greater than 0.');
+        if (isNaN(t) || t <= 0) return showError('Enter a valid term in years.');
+
+        // 3. PROCESSING LAYER & UI RENDER: Mode Computations
+        if (currentMode === 'amortized') {
+            const loan = calcAmortizedLoan(P, r, t);
+            renderSingleResult(
+                'Estimated Monthly Payment',
+                loan.monthlyPayment,
+                P,
+                loan.interest,
+                loan.totalPaid
+            );
+        } else if (currentMode === 'simple') {
+            const simple = calcSimpleInterest(P, r, t);
+            renderSingleResult(
+                'Total Future Balance',
+                simple.total,
+                P,
+                simple.interest,
+                simple.total
+            );
+        } else if (currentMode === 'compound') {
+            const compound = calcCompoundInterest(P, r, t, n);
+            renderSingleResult(
+                'Total Future Balance',
+                compound.total,
+                P,
+                compound.interest,
+                compound.total
+            );
+        } else if (currentMode === 'compare') {
+            const simple = calcSimpleInterest(P, r, t);
+            const compound = calcCompoundInterest(P, r, t, n);
+            const loan = calcAmortizedLoan(P, r, t);
+
+            document.getElementById('compSimpleInterest').textContent = formatCurrency(simple.interest);
+            document.getElementById('compSimpleTotal').textContent = formatCurrency(simple.total);
+
+            document.getElementById('compCompoundInterest').textContent = formatCurrency(compound.interest);
+            document.getElementById('compCompoundTotal').textContent = formatCurrency(compound.total);
+
+            document.getElementById('compAmortizedInterest').textContent = formatCurrency(loan.interest);
+            document.getElementById('compAmortizedTotal').textContent = formatCurrency(loan.totalPaid);
+
+            singleResultContainer.classList.add('hidden');
+            compareResultContainer.classList.remove('hidden');
         }
-        if (isNaN(annualRate) || annualRate <= 0) {
-            showError('Please enter a valid annual interest rate greater than 0.');
-            return;
-        }
-        if (isNaN(termYears) || termYears <= 0 || !Number.isInteger(termYears)) {
-            showError('Please enter a valid loan term in whole years.');
-            return;
-        }
 
-        // 3. PROCESSING LAYER: Financial Formulas
-        // Monthly interest rate = (Annual Rate / 100) / 12
-        const monthlyRate = (annualRate / 100) / 12;
-        // Total number of monthly payments = Term in Years * 12
-        const totalPayments = termYears * 12;
-
-        // Standard Amortization Payment Formula: M = P * [r(1+r)^n] / [(1+r)^n - 1]
-        const rateFactor = Math.pow(1 + monthlyRate, totalPayments);
-        const monthlyPayment = (principal * monthlyRate * rateFactor) / (rateFactor - 1);
-
-        // Derived Totals
-        const totalPaid = monthlyPayment * totalPayments;
-        const totalInterest = totalPaid - principal;
-
-        // Calculate ratios for the breakdown visual
-        const principalPercentage = (principal / totalPaid) * 100;
-        const interestPercentage = (totalInterest / totalPaid) * 100;
-
-        // 4. UI LAYER: Render Output Values to the DOM
-        monthlyPaymentEl.textContent = formatCurrency(monthlyPayment);
-        totalPrincipalEl.textContent = formatCurrency(principal);
-        totalInterestEl.textContent = formatCurrency(totalInterest);
-        totalCostEl.textContent = formatCurrency(totalPaid);
-
-        // Update CSS breakdown bar widths
-        principalBar.style.width = `${principalPercentage.toFixed(1)}%`;
-        interestBar.style.width = `${interestPercentage.toFixed(1)}%`;
-
-        // Display results UI container
         emptyState.classList.add('hidden');
         resultsDisplay.classList.remove('hidden');
     });
 
-    // Reset Form Handler
+    // Reset Handler
     resetBtn.addEventListener('click', () => {
-        loanForm.reset();
+        calculatorForm.reset();
         clearError();
         resultsDisplay.classList.add('hidden');
         emptyState.classList.remove('hidden');
     });
 
-    // Utility Function: Format numbers as standard USD Currency
-    function formatCurrency(value) {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(value);
+    // -------------------------------------------------------------
+    // UI LAYER: Helpers
+    // -------------------------------------------------------------
+    function renderSingleResult(label, primaryVal, principal, interest, total) {
+        compareResultContainer.classList.add('hidden');
+        singleResultContainer.classList.remove('hidden');
+
+        primaryMetricLabel.textContent = label;
+        primaryMetricValue.textContent = formatCurrency(primaryVal);
+        metricPrincipal.textContent = formatCurrency(principal);
+        metricInterest.textContent = formatCurrency(interest);
+        metricTotal.textContent = formatCurrency(total);
+
+        const principalPercent = (principal / total) * 100;
+        const interestPercent = (interest / total) * 100;
+
+        principalBar.style.width = `${principalPercent.toFixed(1)}%`;
+        interestBar.style.width = `${interestPercent.toFixed(1)}%`;
     }
 
-    // Utility Function: Display UI error messages
-    function showError(message) {
-        errorMessage.textContent = message;
+    function formatCurrency(val) {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
+    }
+
+    function showError(msg) {
+        errorMessage.textContent = msg;
         errorMessage.classList.remove('hidden');
     }
 
-    // Utility Function: Clear UI error messages
     function clearError() {
         errorMessage.textContent = '';
         errorMessage.classList.add('hidden');
