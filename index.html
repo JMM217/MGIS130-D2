@@ -5,14 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Interest & Loan Calculator</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Google Fonts for elevated typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
-        <!-- Header with Dark Mode Switcher -->
+        <!-- Header with Fixed Dark Mode Switcher -->
         <header class="app-header">
             <div class="header-content">
                 <div class="brand-title">
@@ -23,9 +22,8 @@
             </div>
             
             <button type="button" id="themeToggleBtn" class="theme-toggle" aria-label="Toggle dark mode">
-                <span class="theme-icon moon-icon">🌙</span>
-                <span class="theme-icon sun-icon hidden">☀️</span>
-                <span class="theme-label">Dark Mode</span>
+                <span id="themeIcon" class="theme-icon">🌙</span>
+                <span id="themeLabel" class="theme-label">Dark Mode</span>
             </button>
         </header>
 
@@ -46,13 +44,13 @@
                     <span class="card-subtitle">Data Layer Inputs</span>
                 </div>
 
-                <form id="calculatorForm" class="loan-form">
+                <form id="calculatorForm" class="loan-form" novalidate>
                     
                     <div class="form-group" id="groupPrincipal">
                         <label for="principalInput" id="labelPrincipal">Principal / Loan Amount ($)</label>
                         <div class="input-wrapper">
                             <span class="input-prefix">$</span>
-                            <input type="number" id="principalInput" placeholder="25,000" min="1" step="any" required>
+                            <input type="number" id="principalInput" placeholder="25000" min="0.01" step="any" required>
                         </div>
                     </div>
 
@@ -60,7 +58,7 @@
                         <label for="rateInput">Annual Interest Rate (%)</label>
                         <div class="input-wrapper">
                             <span class="input-prefix">%</span>
-                            <input type="number" id="rateInput" placeholder="6.5" min="0.01" step="0.01" required>
+                            <input type="number" id="rateInput" placeholder="6.5" min="0.01" step="any" required>
                         </div>
                     </div>
 
@@ -68,7 +66,7 @@
                         <label for="termInput">Term (Years)</label>
                         <div class="input-wrapper">
                             <span class="input-prefix">Yr</span>
-                            <input type="number" id="termInput" placeholder="5" min="1" max="50" required>
+                            <input type="number" id="termInput" placeholder="5" min="1" step="any" required>
                         </div>
                     </div>
 
@@ -93,7 +91,7 @@
                 <div id="errorMessage" class="error-banner hidden" role="alert"></div>
             </section>
 
-            <!-- User Interface Layer (Presentation & Results Display) -->
+            <!-- User Interface Layer (Results Display) -->
             <section class="card results-section">
                 <div class="card-header">
                     <h2>Calculation Results</h2>
@@ -123,4 +121,73 @@
                                 <span id="metricPrincipal" class="metric-value">$0.00</span>
                             </div>
                             <div class="metric-card">
-                                <span class="metric-label">Total
+                                <span class="metric-label">Total Interest</span>
+                                <span id="metricInterest" class="metric-value">$0.00</span>
+                            </div>
+                            <div class="metric-card">
+                                <span class="metric-label">Total Final Cost</span>
+                                <span id="metricTotal" class="metric-value">$0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Visual Ratio Bar -->
+                        <div class="breakdown-bar-container">
+                            <div class="breakdown-labels">
+                                <span>Principal vs. Interest Ratio</span>
+                                <span id="breakdownRatioText">0% / 0%</span>
+                            </div>
+                            <div class="breakdown-bar">
+                                <div id="principalBar" class="bar-segment principal" style="width: 50%;"></div>
+                                <div id="interestBar" class="bar-segment interest" style="width: 50%;"></div>
+                            </div>
+                            <div class="breakdown-legend">
+                                <span class="legend-item"><span class="dot principal-dot"></span> Principal</span>
+                                <span class="legend-item"><span class="dot interest-dot"></span> Total Interest</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Compare Mode Table View -->
+                    <div id="compareResultContainer" class="hidden">
+                        <div class="table-responsive">
+                            <table class="comparison-table">
+                                <thead>
+                                    <tr>
+                                        <th>Calculation Type</th>
+                                        <th>Total Interest</th>
+                                        <th>Final Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Simple Interest</strong></td>
+                                        <td id="compSimpleInterest">$0.00</td>
+                                        <td id="compSimpleTotal">$0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Compound Interest</strong></td>
+                                        <td id="compCompoundInterest">$0.00</td>
+                                        <td id="compCompoundTotal">$0.00</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Amortized Loan</strong></td>
+                                        <td id="compAmortizedInterest">$0.00</td>
+                                        <td id="compAmortizedTotal">$0.00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>Three-Layer Architecture Demonstration: Data Layer (Forms & Inputs) &rarr; Processing Layer (Calculations & Logic) &rarr; UI Layer (DOM & Dark Mode)</p>
+        </footer>
+    </div>
+
+    <script src="app.js" defer></script>
+</body>
+</html>
