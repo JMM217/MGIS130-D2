@@ -2,37 +2,34 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentMode = 'amortized';
 
     // -------------------------------------------------------------
-    // 1. DARK MODE SWITCHER (Verified Working Logic)
+    // 1. DARK MODE LOGIC (Direct DOM Attribute)
     // -------------------------------------------------------------
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     const themeIcon = document.getElementById('themeIcon');
     const themeLabel = document.getElementById('themeLabel');
 
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
+    const savedTheme = localStorage.getItem('calc-theme') || 'light';
+    applyTheme(savedTheme);
 
     themeToggleBtn.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
+        const activeTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        applyTheme(activeTheme);
     });
 
-    function setTheme(theme) {
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('calc-theme', theme);
         if (theme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            if (themeIcon) themeIcon.textContent = '☀️';
-            if (themeLabel) themeLabel.textContent = 'Light Mode';
-            localStorage.setItem('theme', 'dark');
+            themeIcon.textContent = '☀️';
+            themeLabel.textContent = 'Light Mode';
         } else {
-            document.documentElement.setAttribute('data-theme', 'light');
-            if (themeIcon) themeIcon.textContent = '🌙';
-            if (themeLabel) themeLabel.textContent = 'Dark Mode';
-            localStorage.setItem('theme', 'light');
+            themeIcon.textContent = '🌙';
+            themeLabel.textContent = 'Dark Mode';
         }
     }
 
     // -------------------------------------------------------------
-    // 2. UI LAYER: DOM Elements
+    // 2. DOM ELEMENTS
     // -------------------------------------------------------------
     const tabBtns = document.querySelectorAll('.tab-btn');
     const formTitle = document.getElementById('formTitle');
@@ -58,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const interestBar = document.getElementById('interestBar');
 
     // -------------------------------------------------------------
-    // 3. UI LAYER: Tab Switcher Logic
+    // 3. TAB SWITCHING
     // -------------------------------------------------------------
     tabBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -66,36 +63,36 @@ document.addEventListener('DOMContentLoaded', () => {
             tabBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentMode = btn.dataset.mode;
-            updateFormModeUI();
+            updateModeUI();
         });
     });
 
-    function updateFormModeUI() {
+    function updateModeUI() {
         clearError();
-        if (resultsDisplay) resultsDisplay.classList.add('hidden');
-        if (emptyState) emptyState.classList.remove('hidden');
+        resultsDisplay.classList.add('hidden');
+        emptyState.classList.remove('hidden');
 
         if (currentMode === 'amortized') {
-            if (formTitle) formTitle.textContent = 'Loan Amortization Parameters';
-            if (labelPrincipal) labelPrincipal.textContent = 'Loan Amount / Principal ($)';
-            if (groupCompoundFreq) groupCompoundFreq.classList.add('hidden');
+            formTitle.textContent = 'Loan Amortization Parameters';
+            labelPrincipal.textContent = 'Loan Amount / Principal ($)';
+            groupCompoundFreq.classList.add('hidden');
         } else if (currentMode === 'simple') {
-            if (formTitle) formTitle.textContent = 'Simple Interest Parameters';
-            if (labelPrincipal) labelPrincipal.textContent = 'Initial Principal ($)';
-            if (groupCompoundFreq) groupCompoundFreq.classList.add('hidden');
+            formTitle.textContent = 'Simple Interest Parameters';
+            labelPrincipal.textContent = 'Initial Principal ($)';
+            groupCompoundFreq.classList.add('hidden');
         } else if (currentMode === 'compound') {
-            if (formTitle) formTitle.textContent = 'Compound Interest Parameters';
-            if (labelPrincipal) labelPrincipal.textContent = 'Initial Principal ($)';
-            if (groupCompoundFreq) groupCompoundFreq.classList.remove('hidden');
+            formTitle.textContent = 'Compound Interest Parameters';
+            labelPrincipal.textContent = 'Initial Principal ($)';
+            groupCompoundFreq.classList.remove('hidden');
         } else if (currentMode === 'compare') {
-            if (formTitle) formTitle.textContent = 'Comparison Parameters';
-            if (labelPrincipal) labelPrincipal.textContent = 'Principal Amount ($)';
-            if (groupCompoundFreq) groupCompoundFreq.classList.remove('hidden');
+            formTitle.textContent = 'Comparison Parameters';
+            labelPrincipal.textContent = 'Principal Amount ($)';
+            groupCompoundFreq.classList.remove('hidden');
         }
     }
 
     // -------------------------------------------------------------
-    // 4. PROCESSING LAYER: Financial Formulas
+    // 4. FINANCIAL FORMULAS
     // -------------------------------------------------------------
     function calcSimpleInterest(P, r, t) {
         const interest = P * (r / 100) * t;
@@ -120,86 +117,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // -------------------------------------------------------------
-    // 5. DATA & PROCESSING LAYER: Submit Handler & Validations
+    // 5. CALCULATE ACTION HANDLER
     // -------------------------------------------------------------
-    if (calculatorForm) {
-        calculatorForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            clearError();
+    calculatorForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        clearError();
 
-            const rawP = document.getElementById('principalInput')?.value;
-            const rawR = document.getElementById('rateInput')?.value;
-            const rawT = document.getElementById('termInput')?.value;
-            const rawN = document.getElementById('compoundFreq')?.value;
+        // Get numbers
+        const P = parseFloat(document.getElementById('principalInput').value);
+        const r = parseFloat(document.getElementById('rateInput').value);
+        const t = parseFloat(document.getElementById('termInput').value);
+        const n = parseInt(document.getElementById('compoundFreq').value, 10) || 12;
 
-            const P = parseFloat(rawP);
-            const r = parseFloat(rawR);
-            const t = parseFloat(rawT);
-            const n = parseInt(rawN, 10) || 12;
+        // Validations
+        if (isNaN(P) || P <= 0) return showError('Please enter a valid Principal amount greater than 0.');
+        if (isNaN(r) || r <= 0) return showError('Please enter a valid Interest Rate greater than 0.');
+        if (isNaN(t) || t <= 0) return showError('Please enter a valid Term in years greater than 0.');
 
-            if (!rawP || isNaN(P) || P <= 0) return showError('Please enter a valid principal amount greater than 0.');
-            if (!rawR || isNaN(r) || r <= 0) return showError('Please enter a valid annual interest rate greater than 0.');
-            if (!rawT || isNaN(t) || t <= 0) return showError('Please enter a valid term in years greater than 0.');
+        // Compute based on active tab
+        if (currentMode === 'amortized') {
+            const loan = calcAmortizedLoan(P, r, t);
+            displaySingleResult('Estimated Monthly Payment', loan.monthlyPayment, P, loan.interest, loan.totalPaid);
+        } else if (currentMode === 'simple') {
+            const simple = calcSimpleInterest(P, r, t);
+            displaySingleResult('Total Future Balance', simple.total, P, simple.interest, simple.total);
+        } else if (currentMode === 'compound') {
+            const compound = calcCompoundInterest(P, r, t, n);
+            displaySingleResult('Total Future Balance', compound.total, P, compound.interest, compound.total);
+        } else if (currentMode === 'compare') {
+            const simple = calcSimpleInterest(P, r, t);
+            const compound = calcCompoundInterest(P, r, t, n);
+            const loan = calcAmortizedLoan(P, r, t);
 
-            if (currentMode === 'amortized') {
-                const loan = calcAmortizedLoan(P, r, t);
-                renderSingleResult('Estimated Monthly Payment', loan.monthlyPayment, P, loan.interest, loan.totalPaid);
-            } else if (currentMode === 'simple') {
-                const simple = calcSimpleInterest(P, r, t);
-                renderSingleResult('Total Future Balance', simple.total, P, simple.interest, simple.total);
-            } else if (currentMode === 'compound') {
-                const compound = calcCompoundInterest(P, r, t, n);
-                renderSingleResult('Total Future Balance', compound.total, P, compound.interest, compound.total);
-            } else if (currentMode === 'compare') {
-                const simple = calcSimpleInterest(P, r, t);
-                const compound = calcCompoundInterest(P, r, t, n);
-                const loan = calcAmortizedLoan(P, r, t);
+            document.getElementById('compSimpleInterest').textContent = formatCurrency(simple.interest);
+            document.getElementById('compSimpleTotal').textContent = formatCurrency(simple.total);
 
-                document.getElementById('compSimpleInterest').textContent = formatCurrency(simple.interest);
-                document.getElementById('compSimpleTotal').textContent = formatCurrency(simple.total);
+            document.getElementById('compCompoundInterest').textContent = formatCurrency(compound.interest);
+            document.getElementById('compCompoundTotal').textContent = formatCurrency(compound.total);
 
-                document.getElementById('compCompoundInterest').textContent = formatCurrency(compound.interest);
-                document.getElementById('compCompoundTotal').textContent = formatCurrency(compound.total);
+            document.getElementById('compAmortizedInterest').textContent = formatCurrency(loan.interest);
+            document.getElementById('compAmortizedTotal').textContent = formatCurrency(loan.totalPaid);
 
-                document.getElementById('compAmortizedInterest').textContent = formatCurrency(loan.interest);
-                document.getElementById('compAmortizedTotal').textContent = formatCurrency(loan.totalPaid);
+            singleResultContainer.classList.add('hidden');
+            compareResultContainer.classList.remove('hidden');
+        }
 
-                if (singleResultContainer) singleResultContainer.classList.add('hidden');
-                if (compareResultContainer) compareResultContainer.classList.remove('hidden');
-            }
+        emptyState.classList.add('hidden');
+        resultsDisplay.classList.remove('hidden');
+    });
 
-            if (emptyState) emptyState.classList.add('hidden');
-            if (resultsDisplay) resultsDisplay.classList.remove('hidden');
-        });
-    }
-
-    if (resetBtn) {
-        resetBtn.addEventListener('click', () => {
-            if (calculatorForm) calculatorForm.reset();
-            clearError();
-            if (resultsDisplay) resultsDisplay.classList.add('hidden');
-            if (emptyState) emptyState.classList.remove('hidden');
-        });
-    }
+    // Reset Handler
+    resetBtn.addEventListener('click', () => {
+        calculatorForm.reset();
+        clearError();
+        resultsDisplay.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+    });
 
     // -------------------------------------------------------------
-    // 6. UI LAYER Helpers
+    // 6. UI RENDER HELPERS
     // -------------------------------------------------------------
-    function renderSingleResult(label, primaryVal, principal, interest, total) {
-        if (compareResultContainer) compareResultContainer.classList.add('hidden');
-        if (singleResultContainer) singleResultContainer.classList.remove('hidden');
+    function displaySingleResult(label, primaryVal, principal, interest, total) {
+        compareResultContainer.classList.add('hidden');
+        singleResultContainer.classList.remove('hidden');
 
-        if (primaryMetricLabel) primaryMetricLabel.textContent = label;
-        if (primaryMetricValue) primaryMetricValue.textContent = formatCurrency(primaryVal);
-        if (metricPrincipal) metricPrincipal.textContent = formatCurrency(principal);
-        if (metricInterest) metricInterest.textContent = formatCurrency(interest);
-        if (metricTotal) metricTotal.textContent = formatCurrency(total);
+        primaryMetricLabel.textContent = label;
+        primaryMetricValue.textContent = formatCurrency(primaryVal);
+        metricPrincipal.textContent = formatCurrency(principal);
+        metricInterest.textContent = formatCurrency(interest);
+        metricTotal.textContent = formatCurrency(total);
 
-        const principalPercent = (principal / total) * 100;
-        const interestPercent = (interest / total) * 100;
+        const principalPct = Math.min(100, Math.max(0, (principal / total) * 100));
+        const interestPct = Math.min(100, Math.max(0, (interest / total) * 100));
 
-        if (principalBar) principalBar.style.width = `${Math.min(100, Math.max(0, principalPercent)).toFixed(1)}%`;
-        if (interestBar) interestBar.style.width = `${Math.min(100, Math.max(0, interestPercent)).toFixed(1)}%`;
+        principalBar.style.width = `${principalPct}%`;
+        interestBar.style.width = `${interestPct}%`;
     }
 
     function formatCurrency(val) {
@@ -207,16 +199,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showError(msg) {
-        if (errorMessage) {
-            errorMessage.textContent = msg;
-            errorMessage.classList.remove('hidden');
-        }
+        errorMessage.textContent = msg;
+        errorMessage.classList.remove('hidden');
     }
 
     function clearError() {
-        if (errorMessage) {
-            errorMessage.textContent = '';
-            errorMessage.classList.add('hidden');
-        }
+        errorMessage.textContent = '';
+        errorMessage.classList.add('hidden');
     }
 });
