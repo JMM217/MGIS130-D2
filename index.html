@@ -10,8 +10,8 @@
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
-            <h1>Financial Calculator</h1>
-            <p>Interactive Planning Tool for Amortization & Growth</p>
+            <h1>Financial Interest Calculator</h1>
+            <p>Interactive Planning Tool for Loans & Interest Growth</p>
         </header>
 
         <!-- Mode Navigation Tabs -->
@@ -24,24 +24,24 @@
 
         <!-- Main Content Layout -->
         <main class="calculator-grid">
-            <!-- Data Layer (Inputs) -->
+            <!-- Data Layer (Dynamic Input Form) -->
             <section class="card input-section">
                 <h2 id="formTitle">Loan Amortization Parameters</h2>
-                
                 <form id="calculatorForm" class="loan-form">
+                    
                     <div class="form-group" id="groupPrincipal">
-                        <label for="principalInput" id="labelPrincipal">Loan Amount / Principal ($)</label>
-                        <input type="number" id="principalInput" placeholder="e.g., 25000" step="any" required>
+                        <label for="principalInput" id="labelPrincipal">Principal / Loan Amount ($)</label>
+                        <input type="number" id="principalInput" placeholder="e.g., 10000" min="1" step="any" required>
                     </div>
 
                     <div class="form-group" id="groupRate">
                         <label for="rateInput">Annual Interest Rate (%)</label>
-                        <input type="number" id="rateInput" placeholder="e.g., 6.5" step="any" required>
+                        <input type="number" id="rateInput" placeholder="e.g., 6.5" min="0.01" step="0.01" required>
                     </div>
 
                     <div class="form-group" id="groupTerm">
                         <label for="termInput">Term (Years)</label>
-                        <input type="number" id="termInput" placeholder="e.g., 5" step="any" required>
+                        <input type="number" id="termInput" placeholder="e.g., 5" min="1" max="50" required>
                     </div>
 
                     <div class="form-group hidden" id="groupCompoundFreq">
@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" id="submitBtn" class="btn btn-primary">Calculate</button>
+                        <button type="submit" class="btn btn-primary">Calculate</button>
                         <button type="button" id="resetBtn" class="btn btn-secondary">Reset</button>
                     </div>
                 </form>
@@ -92,7 +92,7 @@
                                 <span id="metricInterest" class="metric-value">$0.00</span>
                             </div>
                             <div class="metric-card">
-                                <span class="metric-label">Total Final Cost</span>
+                                <span class="metric-label">Total Final Value</span>
                                 <span id="metricTotal" class="metric-value">$0.00</span>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                         <!-- Visual Ratio Bar -->
                         <div class="breakdown-bar-container">
                             <div class="breakdown-labels">
-                                <span>Principal vs. Interest Ratio</span>
+                                <span>Principal vs. Interest Split</span>
                             </div>
                             <div class="breakdown-bar">
                                 <div id="principalBar" class="bar-segment principal" style="width: 50%;"></div>
@@ -108,7 +108,7 @@
                             </div>
                             <div class="breakdown-legend">
                                 <span class="legend-item"><span class="dot principal-dot"></span> Principal</span>
-                                <span class="legend-item"><span class="dot interest-dot"></span> Total Interest</span>
+                                <span class="legend-item"><span class="dot interest-dot"></span> Interest</span>
                             </div>
                         </div>
                     </div>
@@ -120,7 +120,7 @@
                                 <tr>
                                     <th>Calculation Type</th>
                                     <th>Total Interest</th>
-                                    <th>Final Total</th>
+                                    <th>Final Balance</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -148,7 +148,7 @@
         </main>
 
         <footer class="app-footer">
-            <p>Three-Layer Architecture Demonstration: Data Layer (Forms & Inputs) &rarr; Processing Layer (Financial Calculations) &rarr; UI Layer (DOM Rendering)</p>
+            <p>Three-Layer Architecture Demonstration: Data Layer (Forms & Controls) &rarr; Processing Layer (Financial Formulas) &rarr; UI Layer (DOM Rendering)</p>
         </footer>
     </div>
 
