@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Interest Calculator | 3-Layer Architecture</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header: Application Identity -->
+        <header class="app-header">
+            <h1>Loan Interest Calculator</h1>
+            <p>Interactive Financial Planning Tool</p>
+        </header>
+
+        <!-- Main Content Layout -->
+        <main class="calculator-grid">
+            <!-- Data Layer (Inputs) -->
+            <section class="card input-section">
+                <h2>Loan Parameters</h2>
+                <form id="loanForm" class="loan-form">
+                    
+                    <div class="form-group">
+                        <label for="loanAmount">Loan Amount ($)</label>
+                        <input 
+                            type="number" 
+                            id="loanAmount" 
+                            name="loanAmount" 
+                            placeholder="e.g., 25000" 
+                            min="1" 
+                            step="any"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="interestRate">Annual Interest Rate (%)</label>
+                        <input 
+                            type="number" 
+                            id="interestRate" 
+                            name="interestRate" 
+                            placeholder="e.g., 5.5" 
+                            min="0.01" 
+                            step="0.01"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loanTerm">Loan Term (Years)</label>
+                        <input 
+                            type="number" 
+                            id="loanTerm" 
+                            name="loanTerm" 
+                            placeholder="e.g., 5" 
+                            min="1" 
+                            max="50" 
+                            required>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Calculate Payment</button>
+                        <button type="button" id="resetBtn" class="btn btn-secondary">Reset</button>
+                    </div>
+                </form>
+
+                <!-- UI Error State Display -->
+                <div id="errorMessage" class="error-banner hidden" role="alert"></div>
+            </section>
+
+            <!-- User Interface Layer (Presentation & Results Display) -->
+            <section class="card results-section">
+                <h2>Payment Summary</h2>
+
+                <!-- Default Empty State -->
+                <div id="emptyState" class="empty-state">
+                    <p>Enter your loan details and click <strong>Calculate Payment</strong> to see your breakdown.</p>
+                </div>
+
+                <!-- Active Calculation Results -->
+                <div id="resultsDisplay" class="results-content hidden">
+                    <div class="metric-card highlight">
+                        <span class="metric-label">Estimated Monthly Payment</span>
+                        <span id="monthlyPayment" class="metric-value">$0.00</span>
+                    </div>
+
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <span class="metric-label">Principal Amount</span>
+                            <span id="totalPrincipal" class="metric-value">$0.00</span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Total Interest Paid</span>
+                            <span id="totalInterest" class="metric-value">$0.00</span>
+                        </div>
+
+                        <div class="metric-card">
+                            <span class="metric-label">Total Amount Paid</span>
+                            <span id="totalCost" class="metric-value">$0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown Visual Indicator -->
+                    <div class="breakdown-bar-container">
+                        <div class="breakdown-labels">
+                            <span>Principal vs. Interest Ratio</span>
+                        </div>
+                        <div class="breakdown-bar">
+                            <div id="principalBar" class="bar-segment principal" style="width: 50%;"></div>
+                            <div id="interestBar" class="bar-segment interest" style="width: 50%;"></div>
+                        </div>
+                        <div class="breakdown-legend">
+                            <span class="legend-item"><span class="dot principal-dot"></span> Principal</span>
+                            <span class="legend-item"><span class="dot interest-dot"></span> Interest</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Architectural Footer for Assignment Compliance -->
+        <footer class="app-footer">
+            <p>Three-Layer Architecture Demonstration: Data Layer (Form Inputs) &rarr; Processing Layer (JS Financial Formula) &rarr; UI Layer (DOM Updates)</p>
+        </footer>
+    </div>
+
+    <!-- Script connection to compiled JavaScript or TypeScript output -->
+    <script src="app.js" defer></script>
+</body>
+</html>
