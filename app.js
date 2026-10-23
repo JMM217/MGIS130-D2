@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Current Active Calculator Mode ('amortized' | 'simple' | 'compound' | 'compare')
     let currentMode = 'amortized';
 
     // -------------------------------------------------------------
@@ -31,8 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // UI LAYER: Mode Switching Handler
     // -------------------------------------------------------------
     tabBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
+        btn.addEventListener('click', () => {
             tabBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentMode = btn.dataset.mode;
@@ -51,11 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
             groupCompoundFreq.classList.add('hidden');
         } else if (currentMode === 'simple') {
             formTitle.textContent = 'Simple Interest Parameters';
-            labelPrincipal.textContent = 'Initial Principal ($)';
+            labelPrincipal.textContent = 'Initial Investment / Principal ($)';
             groupCompoundFreq.classList.add('hidden');
         } else if (currentMode === 'compound') {
             formTitle.textContent = 'Compound Interest Parameters';
-            labelPrincipal.textContent = 'Initial Principal ($)';
+            labelPrincipal.textContent = 'Initial Investment / Principal ($)';
             groupCompoundFreq.classList.remove('hidden');
         } else if (currentMode === 'compare') {
             formTitle.textContent = 'Comparison Parameters';
@@ -67,11 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------
     // PROCESSING LAYER: Financial Formulas
     // -------------------------------------------------------------
+    
+    // Simple Interest: I = P * r * t
     function calcSimpleInterest(P, r, t) {
         const interest = P * (r / 100) * t;
         return { interest, total: P + interest };
     }
 
+    // Compound Interest: A = P(1 + r/n)^(n*t)
     function calcCompoundInterest(P, r, t, n) {
         const rateDecimal = r / 100;
         const total = P * Math.pow(1 + (rateDecimal / n), n * t);
@@ -79,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return { interest, total };
     }
 
+    // Amortized Loan Payment: M = P * [r(1+r)^n] / [(1+r)^n - 1]
     function calcAmortizedLoan(P, r, t) {
         const monthlyRate = (r / 100) / 12;
         const totalPayments = t * 12;
@@ -100,23 +104,41 @@ document.addEventListener('DOMContentLoaded', () => {
         const P = parseFloat(document.getElementById('principalInput').value);
         const r = parseFloat(document.getElementById('rateInput').value);
         const t = parseFloat(document.getElementById('termInput').value);
-        const n = parseInt(document.getElementById('compoundFreq').value, 10) || 12;
+        const n = parseInt(document.getElementById('compoundFreq').value, 10);
 
         // 2. PROCESSING LAYER: Input Validation
-        if (isNaN(P) || P <= 0) return showError('Please enter a valid principal amount greater than 0.');
-        if (isNaN(r) || r <= 0) return showError('Please enter a valid annual interest rate greater than 0.');
-        if (isNaN(t) || t <= 0) return showError('Please enter a valid term in years greater than 0.');
+        if (isNaN(P) || P <= 0) return showError('Enter a valid principal amount greater than 0.');
+        if (isNaN(r) || r <= 0) return showError('Enter a valid annual rate greater than 0.');
+        if (isNaN(t) || t <= 0) return showError('Enter a valid term in years.');
 
         // 3. PROCESSING LAYER & UI RENDER: Mode Computations
         if (currentMode === 'amortized') {
             const loan = calcAmortizedLoan(P, r, t);
-            renderSingleResult('Estimated Monthly Payment', loan.monthlyPayment, P, loan.interest, loan.totalPaid);
+            renderSingleResult(
+                'Estimated Monthly Payment',
+                loan.monthlyPayment,
+                P,
+                loan.interest,
+                loan.totalPaid
+            );
         } else if (currentMode === 'simple') {
             const simple = calcSimpleInterest(P, r, t);
-            renderSingleResult('Total Future Balance', simple.total, P, simple.interest, simple.total);
+            renderSingleResult(
+                'Total Future Balance',
+                simple.total,
+                P,
+                simple.interest,
+                simple.total
+            );
         } else if (currentMode === 'compound') {
             const compound = calcCompoundInterest(P, r, t, n);
-            renderSingleResult('Total Future Balance', compound.total, P, compound.interest, compound.total);
+            renderSingleResult(
+                'Total Future Balance',
+                compound.total,
+                P,
+                compound.interest,
+                compound.total
+            );
         } else if (currentMode === 'compare') {
             const simple = calcSimpleInterest(P, r, t);
             const compound = calcCompoundInterest(P, r, t, n);
@@ -163,8 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const principalPercent = (principal / total) * 100;
         const interestPercent = (interest / total) * 100;
 
-        principalBar.style.width = `${Math.min(100, Math.max(0, principalPercent)).toFixed(1)}%`;
-        interestBar.style.width = `${Math.min(100, Math.max(0, interestPercent)).toFixed(1)}%`;
+        principalBar.style.width = `${principalPercent.toFixed(1)}%`;
+        interestBar.style.width = `${interestPercent.toFixed(1)}%`;
     }
 
     function formatCurrency(val) {
