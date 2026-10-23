@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Calculator - Dark Mode Test</title>
+    <title>Financial Calculator - Step 2: Tab Switching</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Header with Dark Mode Switcher -->
+        <!-- Header -->
         <header class="app-header">
             <h1>Financial Calculator</h1>
             
@@ -18,9 +18,50 @@
             </button>
         </header>
 
+        <!-- Mode Navigation Tabs -->
+        <nav class="calculator-tabs" role="tablist">
+            <button type="button" class="tab-btn active" data-mode="amortized">Loan Payment</button>
+            <button type="button" class="tab-btn" data-mode="simple">Simple Interest</button>
+            <button type="button" class="tab-btn" data-mode="compound">Compound Interest</button>
+            <button type="button" class="tab-btn" data-mode="compare">Compare All 3</button>
+        </nav>
+
+        <!-- Input Section -->
         <main class="card">
-            <h2>Dark Mode Test Card</h2>
-            <p>Click the button above to test switching between Light Mode and Dark Mode.</p>
+            <h2 id="formTitle">Loan Amortization Parameters</h2>
+
+            <form id="calculatorForm" class="loan-form">
+                <div class="form-group">
+                    <label for="principalInput" id="labelPrincipal">Principal / Loan Amount ($)</label>
+                    <input type="number" id="principalInput" placeholder="25000">
+                </div>
+
+                <div class="form-group">
+                    <label for="rateInput">Annual Interest Rate (%)</label>
+                    <input type="number" id="rateInput" placeholder="6.5">
+                </div>
+
+                <div class="form-group">
+                    <label for="termInput">Term (Years)</label>
+                    <input type="number" id="termInput" placeholder="5">
+                </div>
+
+                <!-- Hidden by default, shown only for Compound & Compare modes -->
+                <div class="form-group hidden" id="groupCompoundFreq">
+                    <label for="compoundFreq">Compounding Frequency</label>
+                    <select id="compoundFreq">
+                        <option value="12" selected>Monthly (12x/yr)</option>
+                        <option value="4">Quarterly (4x/yr)</option>
+                        <option value="1">Annually (1x/yr)</option>
+                        <option value="365">Daily (365x/yr)</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Calculate</button>
+                    <button type="button" id="resetBtn" class="btn btn-secondary">Reset</button>
+                </div>
+            </form>
         </main>
     </div>
 
