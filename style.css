@@ -1,514 +1,80 @@
-/* CSS Custom Properties & Dynamic Theme Switching */
+/* 1. Default Light Theme Colors */
 :root {
-    /* Light Theme Palette */
-    --bg-color: #f1f5f9;
+    --bg-color: #f8fafc;
     --card-bg: #ffffff;
     --card-border: #e2e8f0;
     --text-primary: #0f172a;
     --text-secondary: #475569;
-    --text-muted: #94a3b8;
-    
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --primary-light: #eff6ff;
-    --primary-border: #bfdbfe;
-    
-    --input-bg: #ffffff;
-    --input-border: #cbd5e1;
-    --input-focus-ring: rgba(37, 99, 235, 0.2);
-    
-    --tab-bg: #ffffff;
-    --tab-border: #e2e8f0;
-    --tab-hover: #f8fafc;
-    
-    --principal-color: #2563eb;
-    --interest-color: #f59e0b;
-    
-    --error-bg: #fef2f2;
-    --error-border: #fca5a5;
-    --error-text: #991b1b;
-    
-    --table-header-bg: #f8fafc;
-    --table-row-hover: #f1f5f9;
-    
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-    
-    --radius-lg: 16px;
-    --radius-md: 10px;
-    --radius-sm: 6px;
-    
-    --transition-speed: 0.25s;
+    --button-bg: #ffffff;
+    --button-border: #cbd5e1;
 }
 
-/* Dark Theme (Inverted High-Contrast Colors) */
+/* 2. Dark Theme Inverted Colors (Applied to <html> tag when active) */
 [data-theme="dark"] {
-    --bg-color: #0b0f19;
-    --card-bg: #151c2c;
-    --card-border: #222d45;
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --card-border: #334155;
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    
-    --primary-color: #3b82f6;
-    --primary-hover: #60a5fa;
-    --primary-light: #1e293b;
-    --primary-border: #334155;
-    
-    --input-bg: #0f172a;
-    --input-border: #334155;
-    --input-focus-ring: rgba(59, 130, 246, 0.3);
-    
-    --tab-bg: #151c2c;
-    --tab-border: #222d45;
-    --tab-hover: #1e293b;
-    
-    --principal-color: #3b82f6;
-    --interest-color: #fbbf24;
-    
-    --error-bg: #450a0a;
-    --error-border: #7f1d1d;
-    --error-text: #fca5a5;
-    
-    --table-header-bg: #0f172a;
-    --table-row-hover: #1e293b;
-    
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 12px 30px -5px rgba(0, 0, 0, 0.5);
+    --button-bg: #1e293b;
+    --button-border: #475569;
 }
 
-/* Reset & Base Styles */
+/* Base resets using CSS variables */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+    font-family: system-ui, -apple-system, sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
     min-height: 100vh;
-    padding: 2.5rem 1rem;
+    padding: 2rem 1rem;
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
 .app-container {
-    max-width: 960px;
+    max-width: 600px;
     width: 100%;
-    margin: 0 auto;
 }
 
-/* Header & Theme Switcher */
 .app-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
-    gap: 1rem;
-    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
 }
 
-.brand-title {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+.card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.brand-badge {
-    background-color: var(--primary-color);
-    color: #ffffff;
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    padding: 0.25rem 0.6rem;
-    border-radius: var(--radius-sm);
+.card h2 {
+    margin-bottom: 0.5rem;
 }
 
-.app-header h1 {
-    font-size: 1.85rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-}
-
-.app-header p {
+.card p {
     color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin-top: 0.25rem;
 }
 
-/* Theme Toggle Button */
 .theme-toggle {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    padding: 0.5rem 0.9rem;
-    border-radius: var(--radius-md);
+    padding: 0.6rem 1rem;
+    background-color: var(--button-bg);
+    border: 1px solid var(--button-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-weight: 600;
     cursor: pointer;
-    box-shadow: var(--shadow-sm);
-    color: var(--text-primary);
-    font-weight: 600;
-    font-size: 0.85rem;
-}
-
-.theme-toggle:hover {
-    background-color: var(--tab-hover);
-    border-color: var(--primary-color);
-}
-
-.theme-icon {
-    font-size: 1rem;
-}
-
-/* Tabs Navigation */
-.calculator-tabs {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1.75rem;
-    flex-wrap: wrap;
-}
-
-.tab-btn {
-    flex: 1;
-    min-width: 130px;
-    padding: 0.85rem 1rem;
-    background-color: var(--tab-bg);
-    border: 1px solid var(--tab-border);
-    border-radius: var(--radius-md);
-    font-weight: 700;
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    cursor: pointer;
-    box-shadow: var(--shadow-sm);
-}
-
-.tab-btn:hover {
-    background-color: var(--tab-hover);
-    color: var(--text-primary);
-}
-
-.tab-btn.active {
-    background-color: var(--primary-color);
-    color: #ffffff;
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-}
-
-/* Main Calculator Layout */
-.calculator-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.75rem;
-}
-
-@media (min-width: 768px) {
-    .calculator-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
-
-/* Cards */
-.card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    box-shadow: var(--shadow-md);
-    display: flex;
-    flex-direction: column;
-}
-
-.card-header {
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--card-border);
-    padding-bottom: 0.75rem;
-}
-
-.card-header h2 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
-.card-subtitle {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-}
-
-/* Form & Input Groups */
-.loan-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-}
-
-.form-group label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-}
-
-.input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.input-prefix {
-    position: absolute;
-    left: 0.85rem;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    pointer-events: none;
-}
-
-.input-wrapper input, .input-wrapper select {
-    width: 100%;
-    padding: 0.75rem 0.85rem 0.75rem 2.25rem;
-    background-color: var(--input-bg);
-    border: 1px solid var(--input-border);
-    border-radius: var(--radius-md);
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.select-wrapper input, .select-wrapper select {
-    padding-left: 0.85rem;
-}
-
-.input-wrapper input:focus, .input-wrapper select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px var(--input-focus-ring);
-}
-
-.form-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 0.75rem;
-}
-
-.btn {
-    flex: 1;
-    padding: 0.85rem 1rem;
-    font-size: 0.9rem;
-    font-weight: 700;
-    border-radius: var(--radius-md);
-    border: none;
-    cursor: pointer;
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    color: #ffffff;
-}
-
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-}
-
-.btn-secondary {
-    background-color: var(--input-bg);
-    color: var(--text-secondary);
-    border: 1px solid var(--card-border);
-}
-
-.btn-secondary:hover {
-    background-color: var(--tab-hover);
-    color: var(--text-primary);
-}
-
-/* Error Banner */
-.error-banner {
-    margin-top: 1rem;
-    padding: 0.85rem 1rem;
-    background-color: var(--error-bg);
-    color: var(--error-text);
-    border-radius: var(--radius-md);
-    font-size: 0.85rem;
-    font-weight: 600;
-    border: 1px solid var(--error-border);
-}
-
-/* Empty State UI */
-.empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    margin: auto 0;
-}
-
-.empty-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.75rem;
-}
-
-.empty-state h3 {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 0.35rem;
-}
-
-.empty-state p {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-    line-height: 1.5;
-}
-
-/* Metrics Displays */
-.metric-card {
-    background-color: var(--bg-color);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    padding: 1rem 1.25rem;
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.metric-card.highlight {
-    background-color: var(--primary-light);
-    border-color: var(--primary-border);
-}
-
-.metric-label {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-secondary);
-    margin-bottom: 0.25rem;
-}
-
-.metric-value {
-    font-size: 1.35rem;
-    font-weight: 800;
-    color: var(--text-primary);
-}
-
-.highlight .metric-value {
-    color: var(--primary-color);
-    font-size: 2.1rem;
-}
-
-.metrics-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-    gap: 0.75rem;
-}
-
-/* Ratio Bar Visual */
-.breakdown-bar-container {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--card-border);
-}
-
-.breakdown-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.825rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: var(--text-secondary);
-}
-
-.breakdown-bar {
-    height: 14px;
-    width: 100%;
-    background-color: var(--card-border);
-    border-radius: 20px;
-    overflow: hidden;
-    display: flex;
-}
-
-.bar-segment.principal {
-    background-color: var(--principal-color);
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.bar-segment.interest {
-    background-color: var(--interest-color);
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.breakdown-legend {
-    display: flex;
-    gap: 1.25rem;
-    margin-top: 0.65rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-}
-
-.dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-}
-
-.principal-dot { background-color: var(--principal-color); }
-.interest-dot { background-color: var(--interest-color); }
-
-/* Comparison Table */
-.table-responsive {
-    overflow-x: auto;
-}
-
-.comparison-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 0.5rem;
-}
-
-.comparison-table th, .comparison-table td {
-    padding: 0.85rem;
-    text-align: left;
-    border-bottom: 1px solid var(--card-border);
-    font-size: 0.875rem;
-}
-
-.comparison-table th {
-    background-color: var(--table-header-bg);
-    color: var(--text-secondary);
-    font-weight: 700;
-}
-
-.comparison-table tr:hover {
-    background-color: var(--table-row-hover);
-}
-
-.hidden { display: none !important; }
-
-/* Footer */
-.app-footer {
-    margin-top: 2.5rem;
-    text-align: center;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    padding: 1.25rem 0;
-    border-top: 1px solid var(--card-border);
 }
