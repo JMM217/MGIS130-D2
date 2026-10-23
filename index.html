@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,7 @@
         <header class="app-header">
             <div class="header-content">
                 <h1>Financial Calculator</h1>
-                <p>Interactive Planning Tool for Loans & Interest Growth</p>
+                <p>Interactive Planning Tool for Amortization & Growth</p>
             </div>
             
             <button type="button" id="themeToggleBtn" class="theme-toggle">
@@ -35,20 +35,20 @@
             <section class="card input-section">
                 <h2 id="formTitle">Loan Amortization Parameters</h2>
                 
-                <form id="calculatorForm" class="loan-form" novalidate>
+                <form id="calculatorForm" class="loan-form">
                     <div class="form-group" id="groupPrincipal">
                         <label for="principalInput" id="labelPrincipal">Loan Amount / Principal ($)</label>
-                        <input type="number" id="principalInput" placeholder="e.g., 25000" min="0.01" step="any" required>
+                        <input type="number" id="principalInput" placeholder="e.g., 25000" step="any" required>
                     </div>
 
                     <div class="form-group" id="groupRate">
                         <label for="rateInput">Annual Interest Rate (%)</label>
-                        <input type="number" id="rateInput" placeholder="e.g., 6.5" min="0.01" step="any" required>
+                        <input type="number" id="rateInput" placeholder="e.g., 6.5" step="any" required>
                     </div>
 
                     <div class="form-group" id="groupTerm">
                         <label for="termInput">Term (Years)</label>
-                        <input type="number" id="termInput" placeholder="e.g., 5" min="1" step="any" required>
+                        <input type="number" id="termInput" placeholder="e.g., 5" step="any" required>
                     </div>
 
                     <div class="form-group hidden" id="groupCompoundFreq">
@@ -62,12 +62,12 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Calculate</button>
+                        <button type="submit" id="submitBtn" class="btn btn-primary">Calculate</button>
                         <button type="button" id="resetBtn" class="btn btn-secondary">Reset</button>
                     </div>
                 </form>
 
-                <div id="errorMessage" class="error-banner hidden" role="alert"></div>
+                <div id="errorMessage" class="error-banner hidden"></div>
             </section>
 
             <!-- User Interface Layer (Results Display) -->
@@ -76,4 +76,89 @@
 
                 <!-- Default Empty State -->
                 <div id="emptyState" class="empty-state">
-                    <p>Enter your financial parameters and click <strong>Calculate</strong> to
+                    <p>Enter your financial parameters and click <strong>Calculate</strong> to display figures and visual breakdowns.</p>
+                </div>
+
+                <!-- Active Calculation Results -->
+                <div id="resultsDisplay" class="results-content hidden">
+                    
+                    <!-- Single Calculation View -->
+                    <div id="singleResultContainer">
+                        <div class="metric-card highlight">
+                            <span class="metric-label" id="primaryMetricLabel">Estimated Monthly Payment</span>
+                            <span id="primaryMetricValue" class="metric-value">$0.00</span>
+                        </div>
+
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <span class="metric-label">Initial Principal</span>
+                                <span id="metricPrincipal" class="metric-value">$0.00</span>
+                            </div>
+                            <div class="metric-card">
+                                <span class="metric-label">Total Interest</span>
+                                <span id="metricInterest" class="metric-value">$0.00</span>
+                            </div>
+                            <div class="metric-card">
+                                <span class="metric-label">Total Final Cost</span>
+                                <span id="metricTotal" class="metric-value">$0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Visual Ratio Bar -->
+                        <div class="breakdown-bar-container">
+                            <div class="breakdown-labels">
+                                <span>Principal vs. Interest Ratio</span>
+                            </div>
+                            <div class="breakdown-bar">
+                                <div id="principalBar" class="bar-segment principal" style="width: 50%;"></div>
+                                <div id="interestBar" class="bar-segment interest" style="width: 50%;"></div>
+                            </div>
+                            <div class="breakdown-legend">
+                                <span class="legend-item"><span class="dot principal-dot"></span> Principal</span>
+                                <span class="legend-item"><span class="dot interest-dot"></span> Total Interest</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparison Table View -->
+                    <div id="compareResultContainer" class="hidden">
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Calculation Type</th>
+                                    <th>Total Interest</th>
+                                    <th>Final Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Simple Interest</strong></td>
+                                    <td id="compSimpleInterest">$0.00</td>
+                                    <td id="compSimpleTotal">$0.00</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Compound Interest</strong></td>
+                                    <td id="compCompoundInterest">$0.00</td>
+                                    <td id="compCompoundTotal">$0.00</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Amortized Loan</strong></td>
+                                    <td id="compAmortizedInterest">$0.00</td>
+                                    <td id="compAmortizedTotal">$0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>Three-Layer Architecture Demonstration: Data Layer (Inputs) &rarr; Processing Layer (Calculations) &rarr; UI Layer (DOM Rendering & Dark Mode)</p>
+        </footer>
+    </div>
+
+    <script src="app.js" defer></script>
+</body>
+</html>
