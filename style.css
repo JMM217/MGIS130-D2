@@ -1,52 +1,51 @@
-/* CSS Theme Variables */
+/* LIGHT MODE DEFAULTS */
 :root {
-    --bg-color: #f8fafc;
+    --bg-color: #f1f5f9;
     --card-bg: #ffffff;
-    --card-border: #e2e8f0;
+    --card-border: #cbd5e1;
     --text-primary: #0f172a;
     --text-secondary: #475569;
-    --button-bg: #ffffff;
-    --button-border: #cbd5e1;
+    --input-bg: #ffffff;
+    --input-border: #94a3b8;
+    --input-text: #0f172a;
     --primary-color: #2563eb;
     --primary-hover: #1d4ed8;
     --primary-light: #eff6ff;
-    --primary-border: #bfdbfe;
-    --input-bg: #ffffff;
-    --input-border: #cbd5e1;
     --principal-color: #2563eb;
     --interest-color: #f59e0b;
-    --error-bg: #fef2f2;
-    --error-border: #fca5a5;
-    --error-text: #991b1b;
+    --btn-sec-bg: #e2e8f0;
+    --btn-sec-text: #334155;
 }
 
-[data-theme="dark"] {
-    --bg-color: #0f172a;
-    --card-bg: #1e293b;
-    --card-border: #334155;
+/* DARK MODE OVERRIDES (Applied on html[data-theme="dark"]) */
+html[data-theme="dark"], [data-theme="dark"] body {
+    background-color: #0b0f19 !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] :root, [data-theme="dark"] {
+    --bg-color: #0b0f19;
+    --card-bg: #151c2c;
+    --card-border: #2a364f;
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
-    --button-bg: #1e293b;
-    --button-border: #475569;
+    --input-bg: #0f172a;
+    --input-border: #334155;
+    --input-text: #ffffff;
     --primary-color: #3b82f6;
     --primary-hover: #60a5fa;
     --primary-light: #1e293b;
-    --primary-border: #334155;
-    --input-bg: #0f172a;
-    --input-border: #334155;
     --principal-color: #3b82f6;
     --interest-color: #fbbf24;
-    --error-bg: #450a0a;
-    --error-border: #7f1d1d;
-    --error-text: #fca5a5;
+    --btn-sec-bg: #1e293b;
+    --btn-sec-text: #cbd5e1;
 }
 
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: system-ui, -apple-system, sans-serif;
-    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 body {
@@ -63,7 +62,7 @@ body {
     width: 100%;
 }
 
-/* Header & Theme Toggle */
+/* Header & Theme Switcher */
 .app-header {
     display: flex;
     justify-content: space-between;
@@ -75,13 +74,12 @@ body {
 
 .app-header h1 {
     font-size: 2rem;
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .app-header p {
     color: var(--text-secondary);
     font-size: 0.95rem;
-    margin-top: 0.25rem;
 }
 
 .theme-toggle {
@@ -89,11 +87,11 @@ body {
     align-items: center;
     gap: 0.5rem;
     padding: 0.6rem 1rem;
-    background-color: var(--button-bg);
-    border: 1px solid var(--button-border);
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
     border-radius: 8px;
     color: var(--text-primary);
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
 }
 
@@ -108,18 +106,14 @@ body {
 .tab-btn {
     flex: 1;
     min-width: 130px;
-    padding: 0.75rem 0.5rem;
+    padding: 0.8rem 0.5rem;
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 8px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.9rem;
     color: var(--text-secondary);
     cursor: pointer;
-}
-
-.tab-btn:hover {
-    color: var(--text-primary);
 }
 
 .tab-btn.active {
@@ -128,7 +122,7 @@ body {
     border-color: var(--primary-color);
 }
 
-/* Main Grid Layout */
+/* Calculator Grid & Cards */
 .calculator-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -141,23 +135,22 @@ body {
     }
 }
 
-/* Card Styling */
 .card {
     background-color: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 12px;
     padding: 1.75rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .card h2 {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     margin-bottom: 1.25rem;
     border-bottom: 1px solid var(--card-border);
     padding-bottom: 0.5rem;
 }
 
-/* Forms & Inputs */
+/* Form Controls */
 .loan-form {
     display: flex;
     flex-direction: column;
@@ -172,23 +165,19 @@ body {
 
 .form-group label {
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-secondary);
 }
 
 .form-group input, .form-group select {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.8rem;
     background-color: var(--input-bg);
     border: 1px solid var(--input-border);
     border-radius: 6px;
-    font-size: 0.95rem;
-    color: var(--text-primary);
-}
-
-.form-group input:focus, .form-group select:focus {
-    outline: none;
-    border-color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--input-text);
 }
 
 .form-actions {
@@ -199,9 +188,9 @@ body {
 
 .btn {
     flex: 1;
-    padding: 0.75rem 1rem;
+    padding: 0.8rem 1rem;
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 700;
     border-radius: 6px;
     border: none;
     cursor: pointer;
@@ -212,25 +201,28 @@ body {
     color: #ffffff;
 }
 
-.btn-primary:hover {
-    background-color: var(--primary-hover);
-}
-
 .btn-secondary {
-    background-color: var(--button-bg);
-    color: var(--text-secondary);
-    border: 1px solid var(--button-border);
+    background-color: var(--btn-sec-bg);
+    color: var(--btn-sec-text);
+    border: 1px solid var(--card-border);
 }
 
 /* Error Banner */
 .error-banner {
     margin-top: 1rem;
     padding: 0.75rem 1rem;
-    background-color: var(--error-bg);
-    color: var(--error-text);
+    background-color: #fef2f2;
+    color: #991b1b;
     border-radius: 6px;
     font-size: 0.875rem;
-    border: 1px solid var(--error-border);
+    font-weight: 600;
+    border: 1px solid #fca5a5;
+}
+
+[data-theme="dark"] .error-banner {
+    background-color: #450a0a;
+    color: #fca5a5;
+    border-color: #7f1d1d;
 }
 
 /* Results Display */
@@ -254,12 +246,13 @@ body {
 
 .metric-card.highlight {
     background-color: var(--primary-light);
-    border-color: var(--primary-border);
+    border-color: var(--primary-color);
 }
 
 .metric-label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
+    font-weight: 700;
     letter-spacing: 0.05em;
     color: var(--text-secondary);
     margin-bottom: 0.25rem;
@@ -267,7 +260,8 @@ body {
 
 .metric-value {
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 800;
+    color: var(--text-primary);
 }
 
 .highlight .metric-value {
@@ -281,35 +275,33 @@ body {
     gap: 0.75rem;
 }
 
-/* Ratio Bar */
+/* Breakdown Visual Bar */
 .breakdown-bar-container {
     margin-top: 1.5rem;
 }
 
 .breakdown-labels {
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 0.85rem;
+    font-weight: 700;
     margin-bottom: 0.5rem;
     color: var(--text-secondary);
 }
 
 .breakdown-bar {
-    height: 12px;
+    height: 14px;
     width: 100%;
     background-color: var(--card-border);
-    border-radius: 6px;
+    border-radius: 8px;
     overflow: hidden;
     display: flex;
 }
 
 .bar-segment.principal {
     background-color: var(--principal-color);
-    transition: width 0.4s ease;
 }
 
 .bar-segment.interest {
     background-color: var(--interest-color);
-    transition: width 0.4s ease;
 }
 
 .breakdown-legend {
@@ -317,6 +309,7 @@ body {
     gap: 1rem;
     margin-top: 0.5rem;
     font-size: 0.8rem;
+    font-weight: 600;
     color: var(--text-secondary);
 }
 
@@ -327,8 +320,8 @@ body {
 }
 
 .dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
 }
 
@@ -352,7 +345,7 @@ body {
 .comparison-table th {
     background-color: var(--bg-color);
     color: var(--text-secondary);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .hidden {
