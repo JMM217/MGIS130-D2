@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,17 +8,10 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Header with Dark Mode Switcher -->
+        <!-- Header -->
         <header class="app-header">
-            <div class="header-content">
-                <h1>Financial Calculator</h1>
-                <p>Interactive Planning Tool for Amortization & Growth</p>
-            </div>
-            
-            <button type="button" id="themeToggleBtn" class="theme-toggle">
-                <span id="themeIcon">🌙</span>
-                <span id="themeLabel">Dark Mode</span>
-            </button>
+            <h1>Financial Calculator</h1>
+            <p>Interactive Planning Tool for Amortization & Growth</p>
         </header>
 
         <!-- Mode Navigation Tabs -->
@@ -67,7 +60,7 @@
                     </div>
                 </form>
 
-                <div id="errorMessage" class="error-banner hidden"></div>
+                <div id="errorMessage" class="error-banner hidden" role="alert"></div>
             </section>
 
             <!-- User Interface Layer (Results Display) -->
@@ -155,7 +148,7 @@
         </main>
 
         <footer class="app-footer">
-            <p>Three-Layer Architecture Demonstration: Data Layer (Inputs) &rarr; Processing Layer (Calculations) &rarr; UI Layer (DOM Rendering & Dark Mode)</p>
+            <p>Three-Layer Architecture Demonstration: Data Layer (Forms & Inputs) &rarr; Processing Layer (Financial Calculations) &rarr; UI Layer (DOM Rendering)</p>
         </footer>
     </div>
 
