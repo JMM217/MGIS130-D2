@@ -1,326 +1,152 @@
-:root {
-    --bg-main: #f4f6f8;
-    --card-bg: #ffffff;
-    --border: #e3e8ee;
-    --text-dark: #1e293b;
-    --text-muted: #64748b;
-    --accent: #2563eb;
-    --accent-hover: #1d4ed8;
-    --accent-light: #f0f6ff;
-    --interest-color: #d97706;
-    --radius: 12px;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Interest Calculator</title>
+    <!-- Google Fonts: Plus Jakarta Sans for UI, JetBrains Mono for monetary figures -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Financial Calculator</h1>
+            <p>Simple planning tool for loans and interest growth</p>
+        </header>
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
+        <!-- Mode Selector -->
+        <nav class="tab-nav" role="tablist">
+            <button type="button" class="tab-btn active" data-mode="amortized">Loan Payment</button>
+            <button type="button" class="tab-btn" data-mode="simple">Simple Interest</button>
+            <button type="button" class="tab-btn" data-mode="compound">Compound Interest</button>
+            <button type="button" class="tab-btn" data-mode="compare">Compare All</button>
+        </nav>
 
-body {
-    background-color: var(--bg-main);
-    color: var(--text-dark);
-    min-height: 100vh;
-    padding: 2.5rem 1rem;
-    display: flex;
-    justify-content: center;
-}
+        <main class="calculator-card">
+            <div class="calculator-grid">
+                <!-- Inputs (Data Layer) -->
+                <section class="form-section">
+                    <h2 id="formTitle">Loan Parameters</h2>
+                    
+                    <form id="calculatorForm">
+                        <div class="field-group">
+                            <label for="principalInput" id="labelPrincipal">Principal Amount ($)</label>
+                            <input type="number" id="principalInput" placeholder="25,000" step="any" required>
+                        </div>
 
-.app-container {
-    max-width: 860px;
-    width: 100%;
-}
+                        <div class="field-group">
+                            <label for="rateInput">Annual Interest Rate (%)</label>
+                            <input type="number" id="rateInput" placeholder="6.5" step="any" required>
+                        </div>
 
-.app-header {
-    text-align: center;
-    margin-bottom: 1.75rem;
-}
+                        <div class="field-group">
+                            <label for="termInput">Term (Years)</label>
+                            <input type="number" id="termInput" placeholder="5" step="any" required>
+                        </div>
 
-.app-header h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-}
+                        <div class="field-group hidden" id="groupCompoundFreq">
+                            <label for="compoundFreq">Compounding Frequency</label>
+                            <select id="compoundFreq">
+                                <option value="12" selected>Monthly (12x/yr)</option>
+                                <option value="4">Quarterly (4x/yr)</option>
+                                <option value="1">Annually (1x/yr)</option>
+                                <option value="365">Daily (365x/yr)</option>
+                            </select>
+                        </div>
 
-.app-header p {
-    color: var(--text-muted);
-    font-size: 0.95rem;
-    margin-top: 0.25rem;
-}
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-primary">Calculate</button>
+                            <button type="button" id="resetBtn" class="btn btn-subtle">Reset</button>
+                        </div>
+                    </form>
 
-/* Mode Switcher Tabs */
-.tab-nav {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
+                    <div id="errorMessage" class="error-msg hidden" role="alert"></div>
+                </section>
 
-.tab-btn {
-    flex: 1;
-    padding: 0.65rem 0.5rem;
-    background-color: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    color: var(--text-muted);
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+                <!-- Results Display (UI Layer) -->
+                <section class="results-section">
+                    <h2>Summary</h2>
 
-.tab-btn.active {
-    background-color: var(--accent);
-    color: #ffffff;
-    border-color: var(--accent);
-}
+                    <!-- Empty State -->
+                    <div id="emptyState" class="empty-state">
+                        <p>Fill in the values and click <strong>Calculate</strong> to see your payment breakdown.</p>
+                    </div>
 
-/* Card Container */
-.calculator-card {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    padding: 2rem;
-}
+                    <!-- Single Mode View -->
+                    <div id="singleResults" class="hidden">
+                        <div class="hero-metric">
+                            <span class="hero-label" id="heroLabel">Estimated Payment</span>
+                            <span class="hero-value number-font" id="heroValue">$0.00</span>
+                        </div>
 
-.calculator-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-}
+                        <div class="summary-pills">
+                            <div class="pill pill-principal">
+                                <span>Principal</span>
+                                <strong id="metricPrincipal" class="number-font">$0.00</strong>
+                            </div>
+                            <div class="pill pill-interest">
+                                <span>Total Interest</span>
+                                <strong id="metricInterest" class="number-font">$0.00</strong>
+                            </div>
+                            <div class="pill pill-total">
+                                <span>Total Cost</span>
+                                <strong id="metricTotal" class="number-font">$0.00</strong>
+                            </div>
+                        </div>
 
-@media (min-width: 768px) {
-    .calculator-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-}
+                        <div class="ratio-wrapper">
+                            <div class="ratio-bar">
+                                <div id="barPrincipal" class="bar-principal" style="width: 50%;"></div>
+                                <div id="barInterest" class="bar-interest" style="width: 50%;"></div>
+                            </div>
+                            <div class="ratio-legend">
+                                <span><i class="dot dot-p"></i> Principal</span>
+                                <span><i class="dot dot-i"></i> Interest</span>
+                            </div>
+                        </div>
+                    </div>
 
-h2 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 1.25rem;
-    color: var(--text-dark);
-}
+                    <!-- Compare Mode View -->
+                    <div id="compareResults" class="hidden">
+                        <table class="compare-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Interest</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Simple</td>
+                                    <td id="compSimpleInterest" class="val-interest number-font">$0.00</td>
+                                    <td id="compSimpleTotal" class="val-total number-font">$0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Compound</td>
+                                    <td id="compCompoundInterest" class="val-interest number-font">$0.00</td>
+                                    <td id="compCompoundTotal" class="val-total number-font">$0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Amortized Loan</td>
+                                    <td id="compAmortizedInterest" class="val-interest number-font">$0.00</td>
+                                    <td id="compAmortizedTotal" class="val-total number-font">$0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </main>
 
-/* Form Fields */
-.field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    margin-bottom: 1rem;
-}
+        <footer class="app-footer">
+            Three-Layer Architecture: Data Layer (Form Inputs) &rarr; Processing Layer (Calculations) &rarr; UI Layer (DOM Display)
+        </footer>
+    </div>
 
-.field-group label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-muted);
-}
-
-.field-group input, .field-group select {
-    padding: 0.65rem 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.95rem;
-    background-color: #fafbfc;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-.field-group input:focus, .field-group select:focus {
-    border-color: var(--accent);
-    background-color: #ffffff;
-}
-
-.button-group {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1.25rem;
-}
-
-.btn {
-    flex: 1;
-    padding: 0.7rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-primary {
-    background-color: var(--accent);
-    color: #ffffff;
-}
-
-.btn-primary:hover {
-    background-color: var(--accent-hover);
-}
-
-.btn-subtle {
-    background-color: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-}
-
-.error-msg {
-    margin-top: 1rem;
-    padding: 0.65rem;
-    background-color: #fef2f2;
-    color: #991b1b;
-    border-radius: 6px;
-    font-size: 0.825rem;
-}
-
-/* Results Display */
-.empty-state {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    padding: 2rem 0;
-    line-height: 1.5;
-}
-
-.hero-metric {
-    background-color: var(--accent-light);
-    border-radius: 10px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.hero-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    font-weight: 600;
-    color: var(--accent);
-    letter-spacing: 0.05em;
-}
-
-.hero-value {
-    font-size: 1.85rem;
-    font-weight: 700;
-    color: var(--accent);
-    margin-top: 0.25rem;
-}
-
-.summary-pills {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
-    margin-bottom: 1.25rem;
-}
-
-.pill {
-    background-color: #fafbfc;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.65rem 0.5rem;
-    display: flex;
-    flex-direction: column;
-}
-
-.pill span {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-}
-
-.pill strong {
-    font-size: 0.95rem;
-    margin-top: 0.2rem;
-}
-
-/* Ratio Split Bar */
-.ratio-bar {
-    height: 8px;
-    width: 100%;
-    background-color: var(--border);
-    border-radius: 4px;
-    overflow: hidden;
-    display: flex;
-}
-
-.bar-principal { background-color: var(--accent); }
-.bar-interest { background-color: var(--interest-color); }
-
-.ratio-legend {
-    display: flex;
-    gap: 1rem;
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-.dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    margin-right: 0.25rem;
-}
-
-.dot-p { background-color: var(--accent); }
-.dot-i { background-color: var(--interest-color); }
-
-/* Comparison Table */
-.compare-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 0.5rem;
-}
-
-.compare-table th, .compare-table td {
-    padding: 0.85rem 0.75rem;
-    font-size: 0.9rem;
-    border-bottom: 1px solid var(--border);
-}
-
-.compare-table th {
-    color: var(--text-muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-}
-
-/* Right-align numbers for monetary alignment */
-.compare-table th:nth-child(2),
-.compare-table th:nth-child(3),
-.compare-table td:nth-child(2),
-.compare-table td:nth-child(3) {
-    text-align: right;
-}
-
-/* Row Name */
-.compare-table td:first-child {
-    font-weight: 600;
-    color: var(--text-dark);
-}
-
-/* Interest Column: Monospace, 1.05rem, Warm Amber */
-.compare-table td:nth-child(2) {
-    font-family: 'SF Mono', 'Roboto Mono', Consolas, monospace;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--interest-color);
-}
-
-/* Total Column: Monospace, 1.15rem, Primary Blue */
-.compare-table td:nth-child(3) {
-    font-family: 'SF Mono', 'Roboto Mono', Consolas, monospace;
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--accent);
-}
-
-.compare-table tbody tr:hover {
-    background-color: #f8fafc;
-}
-
-.hidden { display: none !important; }
-
-.app-footer {
-    text-align: center;
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    margin-top: 2rem;
-}
+    <script src="app.js" defer></script>
+</body>
+</html>
