@@ -7,7 +7,7 @@
     --accent: #2563eb;
     --accent-hover: #1d4ed8;
     --accent-light: #f0f6ff;
-    --interest-color: #f59e0b;
+    --interest-color: #d97706;
     --radius: 12px;
 }
 
@@ -48,7 +48,7 @@ body {
     margin-top: 0.25rem;
 }
 
-/* Tabs */
+/* Mode Switcher Tabs */
 .tab-nav {
     display: flex;
     gap: 0.5rem;
@@ -74,7 +74,7 @@ body {
     border-color: var(--accent);
 }
 
-/* Card */
+/* Card Container */
 .calculator-card {
     background-color: var(--card-bg);
     border: 1px solid var(--border);
@@ -102,7 +102,7 @@ h2 {
     color: var(--text-dark);
 }
 
-/* Form Inputs */
+/* Form Fields */
 .field-group {
     display: flex;
     flex-direction: column;
@@ -229,7 +229,7 @@ h2 {
     margin-top: 0.2rem;
 }
 
-/* Ratio Bar */
+/* Ratio Split Bar */
 .ratio-bar {
     height: 8px;
     width: 100%;
@@ -261,8 +261,7 @@ h2 {
 .dot-p { background-color: var(--accent); }
 .dot-i { background-color: var(--interest-color); }
 
-/* Table */
-/* Comparison Table Styling */
+/* Comparison Table */
 .compare-table {
     width: 100%;
     border-collapse: collapse;
@@ -283,7 +282,7 @@ h2 {
     letter-spacing: 0.05em;
 }
 
-/* Align values to the right for clear financial scanning */
+/* Right-align numbers for monetary alignment */
 .compare-table th:nth-child(2),
 .compare-table th:nth-child(3),
 .compare-table td:nth-child(2),
@@ -291,32 +290,32 @@ h2 {
     text-align: right;
 }
 
-/* Row Labels (Left Side) */
+/* Row Name */
 .compare-table td:first-child {
     font-weight: 600;
     color: var(--text-dark);
 }
 
-/* Interest Figures (Middle Column) - Color Coded Warm Amber */
+/* Interest Column: Monospace, 1.05rem, Warm Amber */
 .compare-table td:nth-child(2) {
     font-family: 'SF Mono', 'Roboto Mono', Consolas, monospace;
     font-size: 1.05rem;
     font-weight: 700;
-    color: #d97706; /* Amber/Orange for Interest Cost */
+    color: var(--interest-color);
 }
 
-/* Final Total Figures (Right Column) - Color Coded Primary Blue */
+/* Total Column: Monospace, 1.15rem, Primary Blue */
 .compare-table td:nth-child(3) {
     font-family: 'SF Mono', 'Roboto Mono', Consolas, monospace;
     font-size: 1.15rem;
     font-weight: 800;
-    color: var(--accent); /* Primary Blue for Total Balance */
+    color: var(--accent);
 }
 
-/* Row Hover State for Easy Reading */
 .compare-table tbody tr:hover {
     background-color: #f8fafc;
 }
+
 .hidden { display: none !important; }
 
 .app-footer {
