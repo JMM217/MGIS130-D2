@@ -262,23 +262,61 @@ h2 {
 .dot-i { background-color: var(--interest-color); }
 
 /* Table */
+/* Comparison Table Styling */
 .compare-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 0.5rem;
 }
 
 .compare-table th, .compare-table td {
-    padding: 0.65rem;
-    text-align: left;
-    font-size: 0.85rem;
+    padding: 0.85rem 0.75rem;
+    font-size: 0.9rem;
     border-bottom: 1px solid var(--border);
 }
 
 .compare-table th {
     color: var(--text-muted);
     font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
 }
 
+/* Align values to the right for clear financial scanning */
+.compare-table th:nth-child(2),
+.compare-table th:nth-child(3),
+.compare-table td:nth-child(2),
+.compare-table td:nth-child(3) {
+    text-align: right;
+}
+
+/* Row Labels (Left Side) */
+.compare-table td:first-child {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Interest Figures (Middle Column) - Color Coded Warm Amber */
+.compare-table td:nth-child(2) {
+    font-family: 'SF Mono', 'Roboto Mono', Consolas, monospace;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #d97706; /* Amber/Orange for Interest Cost */
+}
+
+/* Final Total Figures (Right Column) - Color Coded Primary Blue */
+.compare-table td:nth-child(3) {
+    font-family: 'SF Mono', 'Roboto Mono', Consolas, monospace;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--accent); /* Primary Blue for Total Balance */
+}
+
+/* Row Hover State for Easy Reading */
+.compare-table tbody tr:hover {
+    background-color: #f8fafc;
+}
 .hidden { display: none !important; }
 
 .app-footer {
